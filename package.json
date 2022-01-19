@@ -1,0 +1,26 @@
+{
+  "name": "e-commerce-rest-api",
+  "version": "1.0.0",
+  "description": "Rest Api of E-Commerce",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js"
+  },
+  "keywords": [
+    "e-commerce",
+    "rest",
+    "api"
+  ],
+  "author": "Abhijeet Singh",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "express": "^4.17.2",
+    "express-validator": "^6.14.0",
+    "mongoose": "^6.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
