@@ -1,4 +1,5 @@
-const start = require('./start')
-const unknownRoutesHandler = require('./middleware/unknown-routes-handler')
-
-module.exports = { start, unknownRoutesHandler }
+module.exports = {
+    start: require('./start'),
+    unknownRoutesHandler: require('./unknown-routes-handler'),
+    validate: require('./validate'),
+}
