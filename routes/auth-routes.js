@@ -1,36 +1,42 @@
 const { Router } = require('express')
-const { body } = require('express-validator')
 
-const { validate } = require('../helper')
+const { signupValidation, loginValidation, validate } = require('../helper')
 const authController = require('../controllers/auth-controller')
 
 const router = Router()
 
-// Request	Signup
+// Request	Signup user
 // POST 	/api/auth/signup
 router.post(
 	'/signup',
-	[
-		body('firstname').notEmpty().withMessage('Firstname is required'),
-		body('lastname').notEmpty().withMessage('Lastname is required'),
-		body('password')
-			.isLength({ min: 6 })
-			.withMessage('Password must be at least 6 chars long'),
-		body('email').isEmail().withMessage('Email is invalid'),
-		body('role').notEmpty().withMessage('Role is required'),
-	],
+	signupValidation,
 	validate,
 	authController.signup
 )
 
-// Request	Login
+// Request	Login user
 // POST 	/api/auth/login
 router.post(
 	'/login',
-	[
-		body('email').isEmail().withMessage('Email is invalid'),
-		body('password').notEmpty().withMessage('Password is required'),
-	],
+	loginValidation,
+	validate,
+	authController.login
+)
+
+// Request	Signup admin
+// POST 	/api/auth/admin/signup
+router.post(
+	'/admin/signup',
+	signupValidation,
+	validate,
+	authController.signup
+)
+
+// Request	Login admin
+// POST 	/api/auth/admin/login
+router.post(
+	'/admin/login',
+	loginValidation,
 	validate,
 	authController.login
 )
