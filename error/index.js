@@ -1,4 +1,4 @@
 module.exports = {
-	HttpError: require('./HttpError'),
+	HttpError: require('./http-error'),
 	errorHandler: require('./error-handler'),
 }

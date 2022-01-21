@@ -43,10 +43,6 @@ const userSchema = new mongoose.Schema(
 	}
 )
 
-userSchema.virtual('fullname').get(() => {
-	return `${this.firstname} ${this.lastname}`
-})
-
 const User = mongoose.model('User', userSchema)
 
 module.exports = User
