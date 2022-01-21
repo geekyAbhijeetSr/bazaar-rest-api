@@ -11,7 +11,7 @@ module.exports.signup = async (req, res, next) => {
 		const userExist = await User.findOne({ email })
 
 		if (userExist) {
-			const error = new HttpError(`User with email ${email} already exist`, 422)
+			const error = new HttpError(`Email ${email} already exist`, 422)
 			return next(error)
 		}
 
@@ -61,6 +61,13 @@ module.exports.login = async (req, res, next) => {
 		if (!user) {
 			const error = new HttpError('Invalid Credentials', 401)
 			return next(error)
+		}
+
+		if (req.url === '/admin/login') {
+			if (user.role !== 'admin') {
+				const error = new HttpError('Access denied! you are not admin', 403)
+				return next(error)
+			}
 		}
 
 		const isPasswordValid = await bcrypt.compare(password, user.password)
