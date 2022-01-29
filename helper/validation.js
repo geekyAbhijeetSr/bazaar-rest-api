@@ -4,10 +4,10 @@ const { HttpError } = require('../error')
 const signupValidation = [
 	body('firstname').notEmpty().withMessage('Firstname is required'),
 	body('lastname').notEmpty().withMessage('Lastname is required'),
+	body('email').isEmail().withMessage('Email is invalid'),
 	body('password')
-		.isLength({ min: 6 })
-		.withMessage('Password must be at least 6 chars long'),
-	body('email').isEmail().withMessage('Email is invalid')
+		.isLength({ min: 8 })
+		.withMessage('Password must be at least 8 characters long'),
 ]
 
 const loginValidation = [
@@ -24,8 +24,8 @@ const validate = (req, res, next) => {
 	next()
 }
 
-module.exports ={
+module.exports = {
 	validate,
 	signupValidation,
-	loginValidation
+	loginValidation,
 }
