@@ -1,4 +1,22 @@
-exports.capitalize = str => {
+const fs = require('fs')
+
+const removeLocalFile = async filePath => {
+	try {
+		fs.unlink(filePath, err => {
+			if (err && err.code == 'ENOENT') {
+				console.info("Error! File doesn't exist.")
+			} else if (err) {
+				console.error('Something went wrong. Please try again later.')
+			} else {
+				console.info(`Successfully removed file with the path of ${filePath}`)
+			}
+		})
+	} catch (err) {
+		console.log(err)
+	}
+}
+
+const capitalize = str => {
 	return str[0].toUpperCase() + str.slice(1)
 }
 
@@ -31,4 +49,14 @@ const categoriesToTree = (categories, parentId = null) => {
 	return result
 }
 
-exports.categoriesToTree = categoriesToTree
+const getExt = fileName => {
+	const re = /(?:\.([^.]+))?$/
+	return re.exec(fileName)[1]
+}
+
+module.exports = {
+	removeLocalFile,
+	capitalize,
+	categoriesToTree,
+	getExt,
+}

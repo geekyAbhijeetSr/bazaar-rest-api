@@ -1,8 +1,7 @@
 const express = require('express')
-
-const { start, unknownRoutesHandler } = require('./helper')
-const { errorHandler } = require('./error')
 const { authRoutes, categoryRoutes } = require('./routes')
+const { errorHandler, unknownRoutesHandler } = require('./error')
+const { start } = require('./helper')
 
 const server = express()
 

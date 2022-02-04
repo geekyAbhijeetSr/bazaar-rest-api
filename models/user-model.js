@@ -15,7 +15,15 @@ const userSchema = new mongoose.Schema(
 			trim: true,
 		},
 		avatar: {
-			type: String,
+			img: {
+				type: String,
+			},
+			thumbnail: {
+				type: String,
+			},
+			cloudinaryId: {
+				type: String,
+			}
 		},
 		email: {
 			type: String,

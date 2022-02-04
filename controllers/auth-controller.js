@@ -1,6 +1,12 @@
 const { HttpError } = require('../error')
 const { User } = require('../models')
-const { capitalize } = require('../helper')
+const {
+	capitalize,
+	compressImage,
+	uploadToCloudinary,
+	cloudinaryUrlTransformer,
+	removeLocalFile,
+} = require('../helper')
 
 exports.signup = async (req, res, next) => {
 	try {
@@ -9,6 +15,7 @@ exports.signup = async (req, res, next) => {
 		const userExist = await User.findOne({ email })
 
 		if (userExist) {
+			req.file && await removeLocalFile(req.file.path)
 			const error = new HttpError(`Email ${email} already exist`, 422)
 			return next(error)
 		}
@@ -18,13 +25,27 @@ exports.signup = async (req, res, next) => {
 			role = 'admin'
 		}
 
-		const user = await User.create({
+		const newUserObj = {
 			firstname,
 			lastname,
 			email,
 			password,
 			role,
-		})
+		}
+
+		if (req.file) {
+			const compressedImgPath = await compressImage(req.file.path, 400, 400)
+			const result = await uploadToCloudinary(compressedImgPath)
+			const url = result.secure_url
+
+			newUserObj.avatar = {
+				img: cloudinaryUrlTransformer(url, 'avatar'),
+				thumbnail: cloudinaryUrlTransformer(url, 'small_avatar'),
+				cloudinaryId: result.public_id,
+			}
+		}
+
+		const user = await User.create(newUserObj)
 
 		await user.save()
 
@@ -36,6 +57,7 @@ exports.signup = async (req, res, next) => {
 			user,
 		})
 	} catch (err) {
+		req.file && await removeLocalFile(req.file.path)
 		const error = new HttpError('Signup failed, please try again.', 500)
 		return next(error)
 	}

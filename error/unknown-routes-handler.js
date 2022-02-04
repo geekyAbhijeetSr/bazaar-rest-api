@@ -1,4 +1,4 @@
-const { HttpError } = require('../error')
+const { HttpError } = require('./http-error')
 
 const unknownRoutesHandler = () => {
 	const error = new HttpError('Could not find this route.', 404)
