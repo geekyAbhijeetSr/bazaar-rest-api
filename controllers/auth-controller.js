@@ -6,6 +6,7 @@ const {
 	uploadToCloudinary,
 	cloudinaryUrlTransformer,
 	removeLocalFile,
+	avatarPlaceholder,
 } = require('../helper')
 
 exports.signup = async (req, res, next) => {
@@ -15,8 +16,8 @@ exports.signup = async (req, res, next) => {
 		const userExist = await User.findOne({ email })
 
 		if (userExist) {
-			req.file && await removeLocalFile(req.file.path)
-			const error = new HttpError(`Email ${email} already exist`, 422)
+			req.file && (await removeLocalFile(req.file.path))
+			const error = new HttpError(`Email ${email} already exist.`, 422)
 			return next(error)
 		}
 
@@ -37,11 +38,20 @@ exports.signup = async (req, res, next) => {
 			const compressedImgPath = await compressImage(req.file.path, 400, 400)
 			const result = await uploadToCloudinary(compressedImgPath)
 			const url = result.secure_url
+			const publicId = result.public_id
 
 			newUserObj.avatar = {
-				img: cloudinaryUrlTransformer(url, 'avatar'),
-				thumbnail: cloudinaryUrlTransformer(url, 'small_avatar'),
-				cloudinaryId: result.public_id,
+				original: cloudinaryUrlTransformer(url, 'avatar'),
+				thumbnail: cloudinaryUrlTransformer(url, 'avatar_small'),
+				cloudinaryId: publicId,
+			}
+		} else {
+			let seed = firstname[0]
+			const avatarUrl = avatarPlaceholder("initials", seed)
+
+			newUserObj.avatar = {
+				original: avatarUrl,
+				thumbnail: avatarUrl,
 			}
 		}
 
@@ -51,13 +61,14 @@ exports.signup = async (req, res, next) => {
 
 		const token = await user.generateAuthToken()
 
+		user.password = undefined
 		res.status(201).json({
-			message: `${capitalize(user.role)} created successfully`,
+			message: `${capitalize(user.role)} created successfully.`,
 			token,
 			user,
 		})
 	} catch (err) {
-		req.file && await removeLocalFile(req.file.path)
+		req.file && (await removeLocalFile(req.file.path))
 		const error = new HttpError('Signup failed, please try again.', 500)
 		return next(error)
 	}
@@ -70,13 +81,19 @@ exports.login = async (req, res, next) => {
 		const user = await User.findOne({ email }).select('+password')
 
 		if (!user) {
-			const error = new HttpError('Invalid Credentials', 401)
+			const error = new HttpError('Invalid Credentials.', 401)
 			return next(error)
 		}
 
-		if (req.url === '/admin/login') {
+		if (req.url === '/login') {
+			if (user.role !== 'user') {
+				const error = new HttpError('Invalid Credentials.', 401)
+				return next(error)
+			}
+		}
+		else if (req.url === '/admin/login') {
 			if (user.role !== 'admin') {
-				const error = new HttpError('Access denied! you are not admin', 403)
+				const error = new HttpError('Access denied! you are not admin.', 403)
 				return next(error)
 			}
 		}
@@ -84,18 +101,20 @@ exports.login = async (req, res, next) => {
 		const passwordMatch = await user.comparePassword(password)
 
 		if (!passwordMatch) {
-			const error = new HttpError('Invalid Credentials', 401)
+			const error = new HttpError('Invalid Credentials.', 401)
 			return next(error)
 		}
 
 		const token = await user.generateAuthToken()
 
+		user.password = undefined
 		res.status(200).json({
-			message: `${capitalize(user.role)} logged in successfully`,
+			message: `${capitalize(user.role)} logged in successfully.`,
 			token,
 			user,
 		})
 	} catch (err) {
+		console.log(err)
 		const error = new HttpError('Login failed, please try again.', 500)
 		return next(error)
 	}

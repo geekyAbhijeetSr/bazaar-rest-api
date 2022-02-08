@@ -22,8 +22,7 @@
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^6.1.7",
 		"multer": "^1.4.4",
-		"sharp": "^0.30.0",
-		"slugify": "^1.6.5"
+		"sharp": "^0.30.0"
 	},
 	"devDependencies": {
 		"nodemon": "^2.0.15"

@@ -2,16 +2,35 @@ const {
 	signupValidation,
 	loginValidation,
 	categoryValidation,
+	productValidation,
 	validate,
 } = require('./validation')
 
 const { verifyToken, isAdmin, isUser } = require('./authentication')
 
-const { removeLocalFile, capitalize, categoriesToTree, getExt } = require('./utils')
+const {
+	removeLocalFile,
+	capitalize,
+	categoriesToTree,
+	getExt,
+	convertToSlug,
+	uid,
+	randomColor,
+	avatarPlaceholder,
+} = require('./utils')
 
-const { multerUploadFile } = require('./multer-config')
+const {
+	multerUploadFile,
+	multerUploadFiles,
+	multerValidate,
+} = require('./multer-config')
 
-const { uploadToCloudinary, deleteFromCloudinary, compressImage, cloudinaryUrlTransformer } = require('./cloudinary-config')
+const {
+	uploadToCloudinary,
+	deleteFromCloudinary,
+	compressImage,
+	cloudinaryUrlTransformer,
+} = require('./cloudinary-config')
 
 module.exports = {
 	start: require('./start'),
@@ -20,6 +39,7 @@ module.exports = {
 	signupValidation,
 	loginValidation,
 	categoryValidation,
+	productValidation,
 	validate,
 
 	// from authentication.js
@@ -27,18 +47,24 @@ module.exports = {
 	isAdmin,
 	isUser,
 
-	// from utils.js
-	removeLocalFile,
-	capitalize,
-	categoriesToTree,
-	getExt,
-
 	// from multer-config.js
 	multerUploadFile,
+	multerUploadFiles,
+	multerValidate,
 
 	// from cloudinary-config.js
 	uploadToCloudinary,
 	deleteFromCloudinary,
 	compressImage,
 	cloudinaryUrlTransformer,
+
+	// from utils.js
+	removeLocalFile,
+	capitalize,
+	categoriesToTree,
+	getExt,
+	convertToSlug,
+	uid,
+	randomColor,
+	avatarPlaceholder,
 }

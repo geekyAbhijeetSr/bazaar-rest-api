@@ -1,4 +1,4 @@
-const { body, validationResult } = require('express-validator')
+const { check, body, validationResult } = require('express-validator')
 const { HttpError } = require('../error')
 
 exports.signupValidation = [
@@ -17,6 +17,27 @@ exports.loginValidation = [
 
 exports.categoryValidation = [
 	body('name').notEmpty().withMessage('Name is required'),
+]
+
+exports.productValidation = [
+	body('name').notEmpty().withMessage('Name is required'),
+	body('price').notEmpty().withMessage('Price is required'),
+	body('mrp').notEmpty().withMessage('MRP is required'),
+	body('stock').notEmpty().withMessage('Stock is required'),
+	body('description').notEmpty().withMessage('Description is required'),
+	body('category').notEmpty().withMessage('Category is required'),
+	body('properties').notEmpty().withMessage('Properties is required'),
+	check('image')
+		.custom((value, { req }) => {
+			if (req.file) {
+				return true
+			}
+			if (req.files) {
+				return true
+			}
+			return false
+		})
+		.withMessage('Image is required'),
 ]
 
 exports.validate = (req, res, next) => {

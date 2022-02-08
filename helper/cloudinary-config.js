@@ -1,6 +1,6 @@
 const cloudinary = require('cloudinary').v2
-const { removeLocalFile } = require('./utils')
 const sharp = require('sharp')
+const { removeLocalFile, uid } = require('./utils')
 
 cloudinary.config({
 	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -11,9 +11,7 @@ cloudinary.config({
 exports.uploadToCloudinary = async localFilePath => {
 	try {
 		const result = await cloudinary.uploader.upload(localFilePath)
-
 		await removeLocalFile(localFilePath)
-
 		return result
 	} catch (err) {
 		await removeLocalFile(localFilePath)
@@ -31,7 +29,7 @@ exports.deleteFromCloudinary = async publicId => {
 
 exports.compressImage = async (localFilePath, width, height, quality = 80) => {
 	try {
-		const newPath = `uploads/compressed/${Date.now()}.webp`
+		const newPath = `uploads/compressed/${uid()}.webp`
 
 		await sharp(localFilePath, { animated: true })
 			.toFormat('webp')
@@ -47,27 +45,27 @@ exports.compressImage = async (localFilePath, width, height, quality = 80) => {
 	}
 }
 
-exports.cloudinaryUrlTransformer = (url, transformation) => {
+exports.cloudinaryUrlTransformer = (url, type) => {
 	const index = url.indexOf('upload/') + 7
 	const urlSlice1 = url.slice(0, index)
 	const urlSlice2 = url.slice(index)
-	let params
 
-	switch (transformation) {
+	let params
+	switch (type) {
 		case 'avatar':
 			params = 'c_fill,g_face,h_400,w_400,q_auto:good/'
 			break
-		case 'small_avatar':
-			params = 'c_fill,g_face,h_200,w_200,q_auto:low/'
-			break
-		case 'small_avatar_face':
+		case 'avatar_face':
 			params = 'c_crop,g_face,h_200,w_200,q_auto:low/'
 			break
+		case 'avatar_small':
+			params = 'c_fill,g_face,h_200,w_200,q_auto:low/'
+			break
 		case 'product':
-			params = 'c_fill,h_800,w_800,q_auto:good/'
+			params = 'c_fill,h_624,w_624,q_auto:good/'
 			break
 		case 'product_medium':
-			params = 'c_fill,h_624,w_624,q_auto:good/'
+			params = 'c_fill,h_400,w_400,q_auto:good/'
 			break
 		case 'product_small':
 			params = 'c_fill,h_200,w_200,q_auto:low/'

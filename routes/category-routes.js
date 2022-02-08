@@ -22,4 +22,26 @@ router.post(
 // @access   Public
 router.get('/all', categoryController.getCategories)
 
+// @route    PUT api/category/:id
+// @desc     Update a category
+// @access   Private (Admin)
+router.put(
+	'/:catId',
+	verifyToken,
+	isAdmin,
+	categoryValidation,
+	validate,
+	categoryController.updateCategory
+)
+
+// @route    DELETE api/category/:catId
+// @desc     Delete a category
+// @access   Private (Admin)
+router.delete(
+	'/:catId',
+	verifyToken,
+	isAdmin,
+	categoryController.deleteCategory
+)
+
 module.exports = router

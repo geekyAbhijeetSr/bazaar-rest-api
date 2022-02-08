@@ -6,7 +6,7 @@ exports.verifyToken = async (req, res, next) => {
 		const token = req.headers.authorization.split(' ')[1] // Authorization: 'Bearer TOKEN'
 		if (!token) {
 			const error = new HttpError(
-				'Authentication failed! you are not logged in',
+				'Authentication failed! you are not logged in.',
 				401
 			)
 			return next(error)
@@ -16,7 +16,7 @@ exports.verifyToken = async (req, res, next) => {
 		next()
 	} catch (err) {
 		const error = new HttpError(
-			'Authentication failed! you are not logged in',
+			'Authentication failed! you are not logged in.',
 			401
 		)
 		next(error)
@@ -26,7 +26,7 @@ exports.verifyToken = async (req, res, next) => {
 exports.isAdmin = async (req, res, next) => {
 	try {
 		if (req.tokenPayload.role !== 'admin') {
-			const error = new HttpError('Access denied! you are not admin', 403)
+			const error = new HttpError('Access denied! you are not admin.', 403)
 			return next(error)
 		}
 		next()
@@ -39,7 +39,7 @@ exports.isAdmin = async (req, res, next) => {
 exports.isUser = async (req, res, next) => {
 	try {
 		if (req.tokenPayload.role !== 'user') {
-			const error = new HttpError('Access denied! you are not user', 403)
+			const error = new HttpError('Access denied! you are not user.', 403)
 			return next(error)
 		}
 		next()

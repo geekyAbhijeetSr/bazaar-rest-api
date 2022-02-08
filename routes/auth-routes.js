@@ -1,7 +1,7 @@
 const { Router } = require('express')
 const { signupValidation, loginValidation, validate } = require('../helper')
 const authController = require('../controllers/auth-controller')
-const { multerUploadFile } = require('../helper')
+const { multerUploadFile, multerValidate } = require('../helper')
 
 const router = Router()
 
@@ -13,6 +13,7 @@ router.post(
 	multerUploadFile,
 	signupValidation,
 	validate,
+	multerValidate,
 	authController.signup
 )
 
@@ -24,7 +25,14 @@ router.post('/login', loginValidation, validate, authController.login)
 // @route 	POST api/auth/admin/signup
 // @desc 	Signup admin
 // @access	Public
-router.post('/admin/signup', signupValidation, validate, authController.signup)
+router.post(
+	'/admin/signup',
+	multerUploadFile,
+	signupValidation,
+	validate,
+	multerValidate,
+	authController.signup
+)
 
 // @route 	POST api/auth/admin/login
 // @desc 	Login admin
@@ -32,5 +40,3 @@ router.post('/admin/signup', signupValidation, validate, authController.signup)
 router.post('/admin/login', loginValidation, validate, authController.login)
 
 module.exports = router
-
-//

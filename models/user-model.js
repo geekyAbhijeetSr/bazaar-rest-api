@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
 			trim: true,
 		},
 		avatar: {
-			img: {
+			original: {
 				type: String,
 			},
 			thumbnail: {
