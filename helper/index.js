@@ -17,6 +17,7 @@ const {
 	uid,
 	randomColor,
 	avatarPlaceholder,
+	removeOldFiles,
 } = require('./utils')
 
 const {
@@ -67,4 +68,5 @@ module.exports = {
 	uid,
 	randomColor,
 	avatarPlaceholder,
+	removeOldFiles,
 }

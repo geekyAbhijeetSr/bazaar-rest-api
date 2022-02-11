@@ -3,12 +3,8 @@ const fs = require('fs')
 const { HttpError } = require('../error')
 const { getExt, uid } = require('./utils')
 
-if (!fs.existsSync('./uploads/compressed')) {
-	fs.mkdirSync('./uploads/compressed', { recursive: true })
-}
-
 const errorMessage = {
-	LIMIT_FILE_SIZE: 'File size is too big!',
+	LIMIT_FILE_SIZE: 'File size should not be more than 2MB',
 	LIMIT_UNEXPECTED_FILE: 'Unexpected file!',
 	LIMIT_FIELD_KEY: 'Too many files!',
 
@@ -19,7 +15,10 @@ const errorMessage = {
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		cb(null, './uploads')
+		if (!fs.existsSync('uploads/compressed')) {
+			fs.mkdirSync('uploads/compressed', { recursive: true })
+		}
+		cb(null, 'uploads')
 	},
 	filename: function (req, file, cb) {
 		const ext = getExt(file.originalname)
@@ -41,7 +40,7 @@ const fileFilter = (req, file, cb) => {
 		'image/svg+xml',
 		'image/webp',
 	]
-	
+
 	if (allowedMimes.includes(file.mimetype)) return cb(null, true)
 
 	req.multerError = errorMessage['FILE_TYPE_ERROR']
@@ -49,7 +48,7 @@ const fileFilter = (req, file, cb) => {
 }
 
 const limits = {
-	fileSize: 5 * 1024 * 1024, // Max file size in bytes (5mb)
+	fileSize: 2 * 1024 * 1024, // Max file size in bytes (2mb)
 }
 
 const multerObj = {

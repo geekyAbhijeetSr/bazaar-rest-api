@@ -1,5 +1,6 @@
 const { check, body, validationResult } = require('express-validator')
 const { HttpError } = require('../error')
+const { removeLocalFile } = require('./utils')
 
 exports.signupValidation = [
 	body('firstname').notEmpty().withMessage('Firstname is required'),
@@ -21,6 +22,7 @@ exports.categoryValidation = [
 
 exports.productValidation = [
 	body('name').notEmpty().withMessage('Name is required'),
+	body('brand').notEmpty().withMessage('Brand name is required'),
 	body('price').notEmpty().withMessage('Price is required'),
 	body('mrp').notEmpty().withMessage('MRP is required'),
 	body('stock').notEmpty().withMessage('Stock is required'),
@@ -29,20 +31,26 @@ exports.productValidation = [
 	body('properties').notEmpty().withMessage('Properties is required'),
 	check('image')
 		.custom((value, { req }) => {
-			if (req.file) {
+			if (req.files.length > 0 && !req.multerError) {
 				return true
 			}
-			if (req.files) {
-				return true
-			}
-			return false
+			const message = req.multerError || 'Image is required'
+			throw new Error(message)
 		})
-		.withMessage('Image is required'),
 ]
+
 
 exports.validate = (req, res, next) => {
 	const errors = validationResult(req)
 	if (!errors.isEmpty()) {
+		if (req.file) {
+			removeLocalFile(req.file.path)
+		}
+		if (req.files) {
+			req.files.forEach(file => {
+				removeLocalFile(file.path)
+			})
+		}
 		const error = new HttpError(errors.array(), 422)
 		next(error)
 	}

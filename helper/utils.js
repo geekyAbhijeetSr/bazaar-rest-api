@@ -1,14 +1,15 @@
 const fs = require('fs')
+const path = require('path')
 
 const removeLocalFile = async filePath => {
 	try {
 		fs.unlink(filePath, err => {
 			if (err && err.code == 'ENOENT') {
-				console.info("Error! File doesn't exist.")
+				console.log("Error! File doesn't exist.")
 			} else if (err) {
-				console.error('Something went wrong. Please try again later.')
+				console.log('Something went wrong. Please try again later.')
 			} else {
-				console.info(`Successfully removed file with the path of ${filePath}`)
+				console.log(`Successfully removed file with the path of ${filePath}`)
 			}
 		})
 	} catch (err) {
@@ -69,6 +70,8 @@ const avatarPlaceholder = (sprites, seed) => {
 
 const uid = type => {
 	switch (type) {
+		case 'nano':
+			return Math.random().toString(36).substring(4, 8)
 		case 'short':
 			return new Date().getTime().toString(36)
 		case 'long':
@@ -129,10 +132,31 @@ const convertToSlug = (str, unique = false) => {
 	let slug = cleanStr2.replace(/\s+/g, '-')
 
 	if (unique) {
-		slug = slug + '--' + uid('short')
+		slug = slug + '-_' + uid('nano')
 	}
 
 	return slug
+}
+
+const removeOldFiles = (dir, milliseconds = 86400000, recursive = false) => {
+	// 86400000 ms == 24 hours
+	if (!fs.existsSync(dir)) return
+
+	const files_n_dirs_array = fs.readdirSync(dir)
+
+	files_n_dirs_array.forEach(file_or_dir => {
+		const path_ = path.join(dir, file_or_dir)
+		const stats = fs.statSync(path_)
+
+		const now = new Date()
+		const time = milliseconds
+
+		if (stats.isFile() && now - stats.mtime > time) {
+			removeLocalFile(path_)
+		} else if (stats.isDirectory() && recursive) {
+			removeOldFiles(path_, milliseconds, recursive)
+		}
+	})
 }
 
 module.exports = {
@@ -144,4 +168,5 @@ module.exports = {
 	uid,
 	randomColor,
 	avatarPlaceholder,
+	removeOldFiles,
 }

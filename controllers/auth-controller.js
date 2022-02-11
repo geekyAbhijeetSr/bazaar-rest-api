@@ -16,7 +16,7 @@ exports.signup = async (req, res, next) => {
 		const userExist = await User.findOne({ email })
 
 		if (userExist) {
-			req.file && (await removeLocalFile(req.file.path))
+			req.file && removeLocalFile(req.file.path)
 			const error = new HttpError(`Email ${email} already exist.`, 422)
 			return next(error)
 		}
@@ -55,7 +55,7 @@ exports.signup = async (req, res, next) => {
 			}
 		}
 
-		const user = await User.create(newUserObj)
+		const user = new User(newUserObj)
 
 		await user.save()
 
@@ -68,7 +68,7 @@ exports.signup = async (req, res, next) => {
 			user,
 		})
 	} catch (err) {
-		req.file && (await removeLocalFile(req.file.path))
+		req.file && removeLocalFile(req.file.path)
 		const error = new HttpError('Signup failed, please try again.', 500)
 		return next(error)
 	}

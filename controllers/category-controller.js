@@ -15,7 +15,7 @@ exports.createCategory = async (req, res, next) => {
 			categoryObj.parentId = req.body.parentId
 		}
 
-		const category = await Category.create(categoryObj)
+		const category = new Category(categoryObj)
 
 		await category.save()
 

@@ -17,7 +17,7 @@ const productSchema = mongoose.Schema(
 			require: true,
 			trim: true,
 		},
-		productImages: [
+		images: [
 			{
 				original: {
 					type: String,
@@ -82,6 +82,7 @@ const productSchema = mongoose.Schema(
 		createdBy: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
+			require: true,
         },
 	},
 

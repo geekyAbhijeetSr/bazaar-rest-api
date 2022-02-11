@@ -11,10 +11,10 @@ cloudinary.config({
 exports.uploadToCloudinary = async localFilePath => {
 	try {
 		const result = await cloudinary.uploader.upload(localFilePath)
-		await removeLocalFile(localFilePath)
+		removeLocalFile(localFilePath)
 		return result
 	} catch (err) {
-		await removeLocalFile(localFilePath)
+		removeLocalFile(localFilePath)
 		console.log(err)
 	}
 }
@@ -37,7 +37,7 @@ exports.compressImage = async (localFilePath, width, height, quality = 80) => {
 			.resize(width, height)
 			.toFile(newPath)
 
-		await removeLocalFile(localFilePath)
+		removeLocalFile(localFilePath)
 
 		return newPath
 	} catch (err) {
