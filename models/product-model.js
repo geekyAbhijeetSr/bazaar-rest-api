@@ -38,6 +38,23 @@ const productSchema = mongoose.Schema(
 			require: true,
 			trim: true,
 		},
+		category: {
+			topLevel: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Category',
+				require: true,
+			},
+			secondLevel: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Category',
+				require: true,
+			},
+			thirdLevel: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Category',
+				require: true,
+			},
+		},
 		properties: [
 			{
 				name: {
@@ -52,12 +69,21 @@ const productSchema = mongoose.Schema(
 				},
 			},
 		],
+		mrp: {
+			type: Number,
+			require: true,
+		},
 		price: {
 			type: Number,
 			require: true,
 		},
-		mrp: {
+		stock: {
 			type: Number,
+			require: true,
+		},
+		createdBy: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User',
 			require: true,
 		},
 		rating: {
@@ -68,24 +94,7 @@ const productSchema = mongoose.Schema(
 			type: Number,
 			default: 0,
 		},
-		stock: {
-			type: Number,
-			require: true,
-		},
-		category: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-                ref: 'Category',
-                require: true
-			},
-		],
-		createdBy: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'User',
-			require: true,
-        },
 	},
-
 	{
 		timestamps: true,
 	}

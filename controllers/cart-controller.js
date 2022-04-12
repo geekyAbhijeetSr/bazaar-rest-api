@@ -30,7 +30,7 @@ exports.addToCart = async (req, res, next) => {
 			const productExistInCart = cart.products.find(product => {
 				return product.product.toString() === productId
 			})
-
+			
 			if (productExistInCart) {
 				productExistInCart.quantity += quantity
 			} else {

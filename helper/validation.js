@@ -23,22 +23,53 @@ exports.categoryValidation = [
 exports.productValidation = [
 	body('name').notEmpty().withMessage('Name is required'),
 	body('brand').notEmpty().withMessage('Brand name is required'),
-	body('price').notEmpty().withMessage('Price is required'),
-	body('mrp').notEmpty().withMessage('MRP is required'),
-	body('stock').notEmpty().withMessage('Stock is required'),
 	body('description').notEmpty().withMessage('Description is required'),
-	body('category').notEmpty().withMessage('Category is required'),
+	body('topLevelCat').notEmpty().withMessage('Top level category is required'),
+	body('secondLevelCat').notEmpty().withMessage('Second level category is required'),
+	body('thirdLevelCat').notEmpty().withMessage('Third level category is required'),
 	body('properties').notEmpty().withMessage('Properties is required'),
-	check('image')
-		.custom((value, { req }) => {
-			if (req.files.length > 0 && !req.multerError) {
-				return true
-			}
-			const message = req.multerError || 'Image is required'
-			throw new Error(message)
-		})
+	body('mrp').notEmpty().withMessage('MRP is required'),
+	body('price').notEmpty().withMessage('Price is required'),
+	body('stock').notEmpty().withMessage('Stock is required'),
+	check('image').custom((value, { req }) => {
+		if (req.files.length > 0 && !req.multerError) {
+			return true
+		}
+		const message = req.multerError || 'Image is required'
+		throw new Error(message)
+	}),
 ]
 
+exports.attriCollNameValidation = [
+	body('name').notEmpty().withMessage('Name is required'),
+	body('active').notEmpty().withMessage('Active is required'),
+]
+
+exports.attriCollNameValidation2 = [
+	body('id').notEmpty().withMessage('Collection Id is required'),
+	body('name').notEmpty().withMessage('Name is required'),
+	body('active').notEmpty().withMessage('Active is required'),
+]
+
+exports.attributeValidation = [
+	body('collectionId').notEmpty().withMessage('Collection Id is required'),
+	body('name').notEmpty().withMessage('Name is required'),
+	body('type').notEmpty().withMessage('Type is required'),
+	body('active').notEmpty().withMessage('Active is required'),
+]
+
+exports.attributeValidation2 = [
+	body('collectionId').notEmpty().withMessage('Collection Id is required'),
+	body('attributeId').notEmpty().withMessage('Attribute Id is required'),
+	body('name').notEmpty().withMessage('Name is required'),
+	body('type').notEmpty().withMessage('Type is required'),
+	body('active').notEmpty().withMessage('Active is required'),
+]
+
+exports.attributeDeleteValidation = [
+	body('collectionId').notEmpty().withMessage('Collection Id is required'),
+	body('attributeId').notEmpty().withMessage('Attribute Id is required'),
+]
 
 exports.validate = (req, res, next) => {
 	const errors = validationResult(req)

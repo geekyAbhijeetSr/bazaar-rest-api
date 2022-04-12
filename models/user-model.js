@@ -67,7 +67,7 @@ userSchema.pre('save', async function (next) {
 })
 
 userSchema.methods = {
-	generateAuthToken: async function () {
+	generateAuthToken: async function (expiresIn = '1h') {
 		const user = this
 		const token = await jwt.sign(
 			{
@@ -75,7 +75,7 @@ userSchema.methods = {
 				role: user.role,
 			},
 			process.env.JWT_SECRET,
-			{ expiresIn: '1h' }
+			{ expiresIn }
 		)
 		return token
 	},

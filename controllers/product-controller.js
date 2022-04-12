@@ -5,6 +5,7 @@ const {
 	compressImage,
 	uploadToCloudinary,
 	cloudinaryUrlTransformer,
+	deleteFromCloudinary,
 	removeLocalFile,
 	convertToSlug,
 } = require('../helper')
@@ -12,11 +13,24 @@ const {
 exports.createProduct = async (req, res, next) => {
 	try {
 		const { userId } = req.tokenPayload
-		const { name, price, mrp, stock, description, category, properties } =
+		const { name, brand, description, topLevelCat, secondLevelCat, thirdLevelCat, properties, mrp, price, stock } =
 			req.body
+		
+		const slug = convertToSlug(name)
+		const productExist = await Product.findOne({
+			slug
+		})
 
-		const cat = JSON.parse(category)
+		if (productExist) {
+			const error = new HttpError('Product already exist', 422)
+			return next(error)
+		}
+
 		const prop = JSON.parse(properties)
+		const category = {}
+		category.topLevel = topLevelCat
+		category.secondLevel = secondLevelCat
+		category.thirdLevel = thirdLevelCat
 
 		const images = []
 		for (let file of req.files) {
@@ -37,18 +51,23 @@ exports.createProduct = async (req, res, next) => {
 
 		const productObj = {
 			name: capitalize(name),
-			slug: convertToSlug(name, true),
+			slug,
+			brand,
 			price,
 			mrp,
 			stock,
 			description,
 			images,
-			category: cat,
+			category,
 			properties: prop,
 			createdBy: userId,
 		}
 
-		const product = new Product(productObj)
+		const product = await new Product(productObj)
+
+		await Product.populate(product, {
+			path: 'category.topLevel category.secondLevel category.thirdLevel createdBy',
+		})
 
 		res.status(201).json({
 			message: 'Product created successfully',
@@ -60,6 +79,80 @@ exports.createProduct = async (req, res, next) => {
 		})
 		const error = new HttpError(
 			'Something went wrong, could not create product.',
+			500
+		)
+		return next(error)
+	}
+}
+
+exports.getAllProducts = async (req, res, next) => {
+	try {
+		const products = res.paginatedResults
+
+		res.status(200).json({
+			message: 'Products fetched successfully',
+			products,
+		})
+	} catch (err) {
+		const error = new HttpError(
+			'Something went wrong, could not fetch products.',
+			500
+		)
+		return next(error)
+	}
+}
+
+exports.getProductById = async (req, res, next) => {
+	try {
+		const { id } = req.params
+		const product = await Product.findById(id)
+		if (!product) {
+			const error = new HttpError('Product not found', 404)
+			return next(error)
+		}
+
+		await Product.populate(product, {
+			path: 'category.topLevel category.secondLevel category.thirdLevel createdBy',
+		})
+
+		res.status(200).json({
+			message: 'Product fetched successfully',
+			product,
+		})
+	} catch (err) {
+		const error = new HttpError(
+			'Something went wrong, could not fetch product.',
+			500
+		)
+		return next(error)
+	}
+}
+
+exports.deleteProduct = async (req, res, next) => {
+	try {
+		const { id } = req.params
+		const product = await Product.findById(id)
+		if (!product) {
+			const error = new HttpError('Product not found', 404)
+			return next(error)
+		}
+
+		for (let image of product.images) {
+			const result = await deleteFromCloudinary(image.cloudinaryId)
+			if (result !== 'ok') {
+				const error = new HttpError('Something went wrong, could not delete product.', 500)
+				return next(error)
+			}
+		}
+
+		await product.remove()
+
+		res.status(200).json({
+			message: 'Product deleted successfully',
+		})
+	} catch (err) {
+		const error = new HttpError(
+			'Something went wrong, could not delete product.',
 			500
 		)
 		return next(error)

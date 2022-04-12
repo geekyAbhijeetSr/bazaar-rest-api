@@ -3,4 +3,5 @@ module.exports = {
 	Category: require('./category-model'),
 	Product: require('./product-model'),
 	Cart: require('./cart-model'),
+	AttributeCollection: require('./attribute-modal'),
 }

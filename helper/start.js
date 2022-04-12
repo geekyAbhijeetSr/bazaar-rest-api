@@ -14,9 +14,8 @@ const start = async server => {
 
 		const intervalTime = 1 * 60 * 60 * 1000
 		const time = 60 * 60 * 1000
-		removeOldFiles('uploads', time, true)
-		setInterval(() => {
-			removeOldFiles('uploads/')
+		setInterval(async () => {
+			removeOldFiles('uploads', time, true)
 		}, intervalTime)
 
 	} catch (err) {

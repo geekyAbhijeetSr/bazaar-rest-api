@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const { HttpError } = require('../error')
 
 const removeLocalFile = async filePath => {
 	try {
@@ -7,7 +8,7 @@ const removeLocalFile = async filePath => {
 			if (err && err.code == 'ENOENT') {
 				console.log("Error! File doesn't exist.")
 			} else if (err) {
-				console.log('Something went wrong. Please try again later.')
+				console.log('Something went wrong.')
 			} else {
 				console.log(`Successfully removed file with the path of ${filePath}`)
 			}
@@ -41,6 +42,7 @@ const categoriesToTree = (categories, parentId = null) => {
 				_id: c._id,
 				name: c.name,
 				slug: c.slug,
+				image: c.image,
 				parentId: c.parentId,
 				children: categoriesToTree(categories, c._id),
 			})
@@ -132,7 +134,7 @@ const convertToSlug = (str, unique = false) => {
 	let slug = cleanStr2.replace(/\s+/g, '-')
 
 	if (unique) {
-		slug = slug + '-_' + uid('nano')
+		slug = slug + '-' + uid('nano')
 	}
 
 	return slug
@@ -159,6 +161,45 @@ const removeOldFiles = (dir, milliseconds = 86400000, recursive = false) => {
 	})
 }
 
+function paginatedResponse(model) {
+	return async (req, res, next) => {
+		try {
+			const page = parseInt(req.query.page)
+			const limit = parseInt(req.query.limit)
+
+			const startIndex = (page - 1) * limit
+			const endIndex = page * limit
+
+			const results = {}
+			const totalDocs = await model.countDocuments()
+			results.totalDocs = totalDocs
+
+			if (endIndex < totalDocs) {
+				results.next = {
+					page: page + 1,
+					limit: limit,
+				}
+			}
+
+			if (startIndex > 0) {
+				results.previous = {
+					page: page - 1,
+					limit: limit,
+				}
+			}
+
+			results.docs = await model.find().limit(limit).skip(startIndex).exec()
+			res.paginatedResults = results
+			next()
+		} catch (e) {
+			const error = new HttpError(
+				'Something went wrong, could not get paginated results.',
+				500)
+			return next(error)
+		}
+	}
+}
+
 module.exports = {
 	removeLocalFile,
 	capitalize,
@@ -169,4 +210,5 @@ module.exports = {
 	randomColor,
 	avatarPlaceholder,
 	removeOldFiles,
+	paginatedResponse,
 }

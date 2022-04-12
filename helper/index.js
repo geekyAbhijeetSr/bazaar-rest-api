@@ -3,6 +3,11 @@ const {
 	loginValidation,
 	categoryValidation,
 	productValidation,
+	attriCollNameValidation,
+	attriCollNameValidation2,
+	attributeValidation,
+	attributeValidation2,
+	attributeDeleteValidation,
 	validate,
 } = require('./validation')
 
@@ -18,6 +23,7 @@ const {
 	randomColor,
 	avatarPlaceholder,
 	removeOldFiles,
+	paginatedResponse,
 } = require('./utils')
 
 const {
@@ -41,6 +47,11 @@ module.exports = {
 	loginValidation,
 	categoryValidation,
 	productValidation,
+	attriCollNameValidation,
+	attriCollNameValidation2,
+	attributeValidation,
+	attributeValidation2,
+	attributeDeleteValidation,
 	validate,
 
 	// from authentication.js
@@ -69,4 +80,5 @@ module.exports = {
 	randomColor,
 	avatarPlaceholder,
 	removeOldFiles,
+	paginatedResponse,
 }

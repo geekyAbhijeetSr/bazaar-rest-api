@@ -4,10 +4,11 @@ const { User } = require('../models')
 
 exports.verifyToken = async (req, res, next) => {
 	try {
-		const token = req.headers.authorization.split(' ')[1] // Authorization: 'Bearer TOKEN'
+		const token = req.cookies.jwt
+		
 		if (!token) {
 			const error = new HttpError(
-				'Authentication failed! you are not logged in.',
+				'Authentication failed!',
 				401
 			)
 			return next(error)
@@ -16,8 +17,9 @@ exports.verifyToken = async (req, res, next) => {
 		req.tokenPayload = { userId: decodedToken.userId, role: decodedToken.role }
 		next()
 	} catch (err) {
+		res.clearCookie('jwt')
 		const error = new HttpError(
-			'Authentication failed! you are not logged in.',
+			'Authentication failed!',
 			401
 		)
 		next(error)
@@ -26,9 +28,9 @@ exports.verifyToken = async (req, res, next) => {
 
 exports.isAdmin = async (req, res, next) => {
 	try {
-		const user = await User.findById(req.tokenPayload.userId)
-		if (!user) {
-			const error = new HttpError('User not found', 404)
+		const admin = await User.findById(req.tokenPayload.userId)
+		if (!admin) {
+			const error = new HttpError('Admin not found', 404)
 			return next(error)
 		}
 		if (req.tokenPayload.role !== 'admin') {

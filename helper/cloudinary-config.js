@@ -20,11 +20,8 @@ exports.uploadToCloudinary = async localFilePath => {
 }
 
 exports.deleteFromCloudinary = async publicId => {
-	try {
-		await cloudinary.uploader.destroy(publicId)
-	} catch (err) {
-		console.log(err)
-	}
+	const { result } = await cloudinary.uploader.destroy(publicId)
+	return result
 }
 
 exports.compressImage = async (localFilePath, width, height, quality = 80) => {
