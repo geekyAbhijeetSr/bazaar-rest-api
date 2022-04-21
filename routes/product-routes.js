@@ -3,7 +3,7 @@ const productController = require('../controllers/product-controller')
 const {
 	verifyToken,
 	isAdmin,
-	multerUploadFiles,
+	multerUploadMultiFile,
 	productValidation,
 	validate,
 	paginatedResponse,
@@ -12,6 +12,15 @@ const { Product } = require('../models')
 
 const router = Router()
 
+const fields = [
+	{ name: 'image_main', maxCount: 1 },
+	{ name: 'image_1', maxCount: 1 },
+	{ name: 'image_2', maxCount: 1 },
+	{ name: 'image_3', maxCount: 1 },
+	{ name: 'image_4', maxCount: 1 },
+	{ name: 'image_5', maxCount: 1 },
+]
+
 // @route    POST api/product/create
 // @desc     Create a product
 // @access   Private (Admin)
@@ -19,7 +28,7 @@ router.post(
 	'/create',
 	verifyToken,
 	isAdmin,
-	multerUploadFiles,
+	multerUploadMultiFile(fields),
 	productValidation,
 	validate,
 	productController.createProduct

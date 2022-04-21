@@ -10,7 +10,7 @@ const router = Router()
 // @access	Public
 router.post(
 	'/signup',
-	multerUploadFile,
+	multerUploadFile('image'),
 	signupValidation,
 	validate,
 	multerValidate,
@@ -27,7 +27,7 @@ router.post('/login', loginValidation, validate, authController.login)
 // @access	Public
 router.post(
 	'/admin/signup',
-	multerUploadFile,
+	multerUploadFile('image'),
 	signupValidation,
 	validate,
 	multerValidate,

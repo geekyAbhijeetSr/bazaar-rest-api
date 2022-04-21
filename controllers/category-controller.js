@@ -61,6 +61,10 @@ exports.createCategory = async (req, res, next) => {
 
 		await category.save()
 
+		await Category.populate(category, {
+			path: 'attributeCollection',
+		})
+
 		res.status(201).json({
 			message: 'Category created successfully',
 			category,
@@ -75,6 +79,9 @@ exports.createCategory = async (req, res, next) => {
 exports.getCategories = async (req, res, next) => {
 	try {
 		const categories = await Category.find({})
+		await Category.populate(categories, {
+			path: 'attributeCollection',
+		})
 		const nestedCategories = categoriesToTree(categories)
 		res.status(200).json({
 			message: 'Categories fetched successfully',
@@ -129,6 +136,10 @@ exports.updateCategory = async (req, res, next) => {
 
 		await category.save()
 
+		await Category.populate(category, {
+			path: 'attributeCollection',
+		})
+
 		res.status(200).json({
 			message: 'Category updated successfully',
 			category,
@@ -151,6 +162,10 @@ exports.toggleActiveCategory = async (req, res, next) => {
 		category.active = !category.active
 
 		await category.save()
+
+		await Category.populate(category, {
+			path: 'attributeCollection',
+		})
 
 		res.status(200).json({
 			message: 'Category updated successfully',

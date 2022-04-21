@@ -44,6 +44,7 @@ const categoriesToTree = (categories, parentId = null) => {
 				slug: c.slug,
 				image: c.image,
 				parentId: c.parentId,
+				attributeCollection: c.attributeCollection,
 				children: categoriesToTree(categories, c._id),
 			})
 		}

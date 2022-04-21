@@ -28,6 +28,7 @@ const {
 
 const {
 	multerUploadFile,
+	multerUploadMultiFile,
 	multerUploadFiles,
 	multerValidate,
 } = require('./multer-config')
@@ -61,6 +62,7 @@ module.exports = {
 
 	// from multer-config.js
 	multerUploadFile,
+	multerUploadMultiFile,
 	multerUploadFiles,
 	multerValidate,
 

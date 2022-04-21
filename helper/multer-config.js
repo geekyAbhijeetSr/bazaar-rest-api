@@ -57,28 +57,51 @@ const multerObj = {
 	fileFilter,
 }
 
-exports.multerUploadFile = (req, res, next) => {
-	const upload = multer(multerObj).single('image')
+exports.multerUploadFile = name => {
+	return (req, res, next) => {
+		const upload = multer(multerObj).single(name)
 
-	upload(req, res, function (err) {
-		if (err && !req.multerError) {
-			const message = errorMessage[err.code] || errorMessage['DEFAULT_ERROR']
-			req.multerError = message
-		}
-		return next()
-	})
+		upload(req, res, function (err) {
+			if (err && !req.multerError) {
+				const message = errorMessage[err.code] || errorMessage['DEFAULT_ERROR']
+				req.multerError = message
+			}
+			return next()
+		})
+	}
 }
 
-exports.multerUploadFiles = (req, res, next) => {
-	const upload = multer(multerObj).array('image', 12)
+exports.multerUploadMultiFile = fields => {
+	return (req, res, next) => {
+		// fields example:
+		// 	[
+		// 		{ name: 'avatar', maxCount: 1 },
+		// 		{ name: 'gallery', maxCount: 8 }
+		// 	]
+		const upload = multer(multerObj).fields(fields)
 
-	upload(req, res, function (err) {
-		if (err && !req.multerError) {
-			const message = errorMessage[err.code] || errorMessage['DEFAULT_ERROR']
-			req.multerError = message
-		}
-		return next()
-	})
+		upload(req, res, function (err) {
+			if (err && !req.multerError) {
+				const message = errorMessage[err.code] || errorMessage['DEFAULT_ERROR']
+				req.multerError = message
+			}
+			return next()
+		})
+	}
+}
+
+exports.multerUploadFiles = (fieldName, maxCount) => {
+	return (req, res, next) => {
+		const upload = multer(multerObj).array(fieldName, maxCount)
+
+		upload(req, res, function (err) {
+			if (err && !req.multerError) {
+				const message = errorMessage[err.code] || errorMessage['DEFAULT_ERROR']
+				req.multerError = message
+			}
+			return next()
+		})
+	}
 }
 
 exports.multerValidate = (req, res, next) => {

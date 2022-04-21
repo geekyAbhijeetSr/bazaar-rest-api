@@ -13,12 +13,22 @@ const {
 exports.createProduct = async (req, res, next) => {
 	try {
 		const { userId } = req.tokenPayload
-		const { name, brand, description, topLevelCat, secondLevelCat, thirdLevelCat, properties, mrp, price, stock } =
-			req.body
-		
+		const {
+			name,
+			brand,
+			description,
+			topLevelCat,
+			secondLevelCat,
+			thirdLevelCat,
+			properties,
+			mrp,
+			price,
+			stock,
+		} = req.body
+
 		const slug = convertToSlug(name)
 		const productExist = await Product.findOne({
-			slug
+			slug,
 		})
 
 		if (productExist) {
@@ -26,6 +36,8 @@ exports.createProduct = async (req, res, next) => {
 			return next(error)
 		}
 
+		console.log(properties)
+		console.log(typeof properties)
 		const prop = JSON.parse(properties)
 		const category = {}
 		category.topLevel = topLevelCat
@@ -33,8 +45,11 @@ exports.createProduct = async (req, res, next) => {
 		category.thirdLevel = thirdLevelCat
 
 		const images = []
-		for (let file of req.files) {
-			const compressedImgPath = await compressImage(file.path, 624, 624)
+		const keys = Object.keys(req.files)
+
+		for (let key of keys) {
+			const imageFile = req.files[key][0]
+			const compressedImgPath = await compressImage(imageFile.path)
 			const result = await uploadToCloudinary(compressedImgPath)
 
 			const url = result.secure_url
@@ -74,8 +89,12 @@ exports.createProduct = async (req, res, next) => {
 			product,
 		})
 	} catch (err) {
-		req.files.forEach(async file => {
-			removeLocalFile(file.path)
+		console.log(err)
+		const keys = Object.keys(req.files)
+		keys.forEach(key => {
+			req.files[key].forEach(file => {
+				removeLocalFile(file.path)
+			})
 		})
 		const error = new HttpError(
 			'Something went wrong, could not create product.',
@@ -140,7 +159,10 @@ exports.deleteProduct = async (req, res, next) => {
 		for (let image of product.images) {
 			const result = await deleteFromCloudinary(image.cloudinaryId)
 			if (result !== 'ok') {
-				const error = new HttpError('Something went wrong, could not delete product.', 500)
+				const error = new HttpError(
+					'Something went wrong, could not delete product.',
+					500
+				)
 				return next(error)
 			}
 		}

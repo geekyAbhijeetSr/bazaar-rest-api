@@ -25,17 +25,21 @@ exports.productValidation = [
 	body('brand').notEmpty().withMessage('Brand name is required'),
 	body('description').notEmpty().withMessage('Description is required'),
 	body('topLevelCat').notEmpty().withMessage('Top level category is required'),
-	body('secondLevelCat').notEmpty().withMessage('Second level category is required'),
-	body('thirdLevelCat').notEmpty().withMessage('Third level category is required'),
+	body('secondLevelCat')
+		.notEmpty()
+		.withMessage('Second level category is required'),
+	body('thirdLevelCat')
+		.notEmpty()
+		.withMessage('Third level category is required'),
 	body('properties').notEmpty().withMessage('Properties is required'),
 	body('mrp').notEmpty().withMessage('MRP is required'),
 	body('price').notEmpty().withMessage('Price is required'),
 	body('stock').notEmpty().withMessage('Stock is required'),
-	check('image').custom((value, { req }) => {
-		if (req.files.length > 0 && !req.multerError) {
+	check('image_main').custom((value, { req }) => {
+		if (req.files.image_main && !req.multerError) {
 			return true
 		}
-		const message = req.multerError || 'Image is required'
+		const message = req.multerError || 'Main image is required'
 		throw new Error(message)
 	}),
 ]
@@ -73,14 +77,24 @@ exports.attributeDeleteValidation = [
 
 exports.validate = (req, res, next) => {
 	const errors = validationResult(req)
+	console.log("req.files: ", req.files)
 	if (!errors.isEmpty()) {
 		if (req.file) {
 			removeLocalFile(req.file.path)
 		}
 		if (req.files) {
-			req.files.forEach(file => {
-				removeLocalFile(file.path)
-			})
+			if (Array.isArray(req.files)) {
+				req.files.forEach(file => {
+					removeLocalFile(file.path)
+				})
+			} else if (typeof req.files === 'object') {
+				const keys = Object.keys(req.files)
+				keys.forEach(key => {
+					req.files[key].forEach(file => {
+						removeLocalFile(file.path)
+					})
+				})
+			}
 		}
 		const error = new HttpError(errors.array(), 422)
 		next(error)
