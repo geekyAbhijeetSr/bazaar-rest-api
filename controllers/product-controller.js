@@ -36,8 +36,6 @@ exports.createProduct = async (req, res, next) => {
 			return next(error)
 		}
 
-		console.log(properties)
-		console.log(typeof properties)
 		const prop = JSON.parse(properties)
 		const category = {}
 		category.topLevel = topLevelCat
@@ -50,7 +48,7 @@ exports.createProduct = async (req, res, next) => {
 		for (let key of keys) {
 			const imageFile = req.files[key][0]
 			const compressedImgPath = await compressImage(imageFile.path)
-			const result = await uploadToCloudinary(compressedImgPath)
+			const result = await uploadToCloudinary(compressedImgPath, 'products')
 
 			const url = result.secure_url
 			const publicId = result.public_id
@@ -80,6 +78,8 @@ exports.createProduct = async (req, res, next) => {
 
 		const product = await new Product(productObj)
 
+		await product.save()
+
 		await Product.populate(product, {
 			path: 'category.topLevel category.secondLevel category.thirdLevel createdBy',
 		})
@@ -89,7 +89,6 @@ exports.createProduct = async (req, res, next) => {
 			product,
 		})
 	} catch (err) {
-		console.log(err)
 		const keys = Object.keys(req.files)
 		keys.forEach(key => {
 			req.files[key].forEach(file => {
@@ -104,8 +103,16 @@ exports.createProduct = async (req, res, next) => {
 	}
 }
 
-exports.getAllProducts = async (req, res, next) => {
+exports.getProducts = async (req, res, next) => {
 	try {
+		const { docs } = res.paginatedResults
+
+		await Product.populate(docs, {
+			path: 'category.topLevel category.secondLevel category.thirdLevel createdBy',
+		})
+
+		res.paginatedResults.docs = docs
+
 		const products = res.paginatedResults
 
 		res.status(200).json({

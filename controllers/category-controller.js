@@ -12,19 +12,14 @@ const {
 
 exports.createCategory = async (req, res, next) => {
 	try {
-		const { name, active, attributeCollection } = req.body
+		const { name, parentId, attributeCollection } = req.body
 
 		const categoryObj = {
 			name,
-			active,
 		}
 
-		if (attributeCollection) {
-			categoryObj.attributeCollection = attributeCollection
-		}
-
-		if (req.body.parentId) {
-			const parentCategory = await Category.findById(req.body.parentId)
+		if (parentId) {
+			const parentCategory = await Category.findById(parentId)
 			if (!parentCategory) {
 				const error = new HttpError('Parent category not found', 404)
 				return next(error)
@@ -45,9 +40,12 @@ exports.createCategory = async (req, res, next) => {
 			return next(error)
 		}
 
+		attributeCollection &&
+			(categoryObj.attributeCollection = attributeCollection)
+
 		if (req.file) {
 			const compressedImgPath = await compressImage(req.file.path, 400, 400)
-			const result = await uploadToCloudinary(compressedImgPath)
+			const result = await uploadToCloudinary(compressedImgPath, 'categories')
 			const url = result.secure_url
 			const publicId = result.public_id
 
@@ -96,18 +94,37 @@ exports.getCategories = async (req, res, next) => {
 
 exports.updateCategory = async (req, res, next) => {
 	try {
-		const { name, active, attributeCollection } = req.body
-		const foundCat = await Category.findById(req.params.catId)
+		const { name, attributeCollection } = req.body
+		const { catId } = req.params
 
-		const categoryObj = {
-			name,
-			active,
-			slug: convertToSlug(name, true),
+		const foundCat = await Category.findById(catId)
+
+		if (!foundCat) {
+			const error = new HttpError('Category not found', 404)
+			return next(error)
 		}
 
-		if (attributeCollection) {
-			categoryObj.attributeCollection = attributeCollection
+		if (foundCat.parentId) {
+			const parentCategory = await Category.findById(foundCat.parentId)
+			if (!parentCategory) {
+				const error = new HttpError('Parent category not found', 404)
+				return next(error)
+			}
+			foundCat.slug =
+				convertToSlug(name) + '-' + convertToSlug(parentCategory.name)
+
+			const existCategory = await Category.findOne({
+				slug: foundCat.slug,
+			})
+
+			if (existCategory && existCategory._id.toString() !== catId) {
+				const error = new HttpError('Category already exist', 422)
+				return next(error)
+			}
 		}
+
+		foundCat.name = name
+		attributeCollection && (foundCat.attributeCollection = attributeCollection)
 
 		if (req.file) {
 			const result_ = await deleteFromCloudinary(foundCat.image.cloudinaryId)
@@ -116,33 +133,25 @@ exports.updateCategory = async (req, res, next) => {
 				return next(error)
 			}
 			const compressedImgPath = await compressImage(req.file.path, 400, 400)
-			const result = await uploadToCloudinary(compressedImgPath)
+			const result = await uploadToCloudinary(compressedImgPath, 'categories')
 			const url = result.secure_url
 			const publicId = result.public_id
 
-			categoryObj.image = {
+			foundCat.image = {
 				url: cloudinaryUrlTransformer(url, 'q_medium'),
 				cloudinaryId: publicId,
 			}
 		}
 
-		const category = await Category.findByIdAndUpdate(
-			req.params.catId,
-			categoryObj,
-			{
-				new: true,
-			}
-		)
+		await foundCat.save()
 
-		await category.save()
-
-		await Category.populate(category, {
+		await Category.populate(foundCat, {
 			path: 'attributeCollection',
 		})
 
 		res.status(200).json({
 			message: 'Category updated successfully',
-			category,
+			category: foundCat,
 		})
 	} catch (err) {
 		const error = new HttpError('Updating category failed', 500)
@@ -195,15 +204,11 @@ exports.deleteCategory = async (req, res, next) => {
 			return next(error)
 		}
 
-		await Category.findByIdAndDelete(req.params.catId)
-
 		if (category.image.cloudinaryId) {
 			const result = await deleteFromCloudinary(category.image.cloudinaryId)
-			if (result !== 'ok') {
-				const error = new HttpError('Deleting category failed', 500)
-				return next(error)
-			}
 		}
+
+		await Category.findByIdAndDelete(req.params.catId)
 
 		res.status(200).json({
 			message: 'Category deleted successfully',

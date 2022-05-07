@@ -26,7 +26,7 @@ router.post('/login', loginValidation, validate, authController.login)
 // @desc 	Signup admin
 // @access	Public
 router.post(
-	'/admin/signup',
+	'/dashboard/signup',
 	multerUploadFile('image'),
 	signupValidation,
 	validate,
@@ -37,7 +37,7 @@ router.post(
 // @route 	POST api/auth/admin/login
 // @desc 	Login admin
 // @access	Public
-router.post('/admin/login', loginValidation, validate, authController.login)
+router.post('/dashboard/login', loginValidation, validate, authController.login)
 
 // @route 	POST api/auth/logout
 // @desc 	Logout user/admin

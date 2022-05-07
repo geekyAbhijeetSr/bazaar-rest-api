@@ -24,9 +24,9 @@ exports.signup = async (req, res, next) => {
 			return next(error)
 		}
 
-		let role = 'user'
-		if (req.url === '/admin/signup') {
-			role = 'admin'
+		let role = 'customer'
+		if (req.url === '/dashboard/signup') {
+			role = 'vendor'
 		}
 
 		const newUserObj = {
@@ -39,7 +39,7 @@ exports.signup = async (req, res, next) => {
 
 		if (req.file) {
 			const compressedImgPath = await compressImage(req.file.path, 400, 400)
-			const result = await uploadToCloudinary(compressedImgPath)
+			const result = await uploadToCloudinary(compressedImgPath, 'users')
 			const url = result.secure_url
 			const publicId = result.public_id
 
@@ -73,7 +73,7 @@ exports.signup = async (req, res, next) => {
 				maxAge: expiresIn,
 			})
 			.json({
-				message: `${capitalize(user.role)} created successfully`,
+				message: `${capitalize(user.role)} registered successfully`,
 				user,
 				exp: new Date().getTime() + expiresIn,
 			})

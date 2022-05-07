@@ -172,7 +172,10 @@ function paginatedResponse(model) {
 			const endIndex = page * limit
 
 			const results = {}
+			const docs = await model.find().skip(startIndex).limit(limit)
 			const totalDocs = await model.countDocuments()
+
+			results.fetchedDocs = docs.length
 			results.totalDocs = totalDocs
 
 			if (endIndex < totalDocs) {
@@ -182,6 +185,11 @@ function paginatedResponse(model) {
 				}
 			}
 
+			results.current = {
+				page: page,
+				limit: limit,
+			}
+
 			if (startIndex > 0) {
 				results.previous = {
 					page: page - 1,
@@ -189,13 +197,16 @@ function paginatedResponse(model) {
 				}
 			}
 
-			results.docs = await model.find().limit(limit).skip(startIndex).exec()
+			results.docs = docs
+
 			res.paginatedResults = results
+
 			next()
 		} catch (e) {
 			const error = new HttpError(
 				'Something went wrong, could not get paginated results.',
-				500)
+				500
+			)
 			return next(error)
 		}
 	}

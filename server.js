@@ -15,7 +15,7 @@ const server = express()
 
 server.use(express.json())
 server.use(cookieParser())
-server.use(cors({origin: ['http://localhost:3000'], credentials: true}))
+server.use(cors({ origin: ['http://localhost:3000'], credentials: true }))
 
 server.use('/api/auth', authRoutes)
 server.use('/api/attribute', attributeRoutes)

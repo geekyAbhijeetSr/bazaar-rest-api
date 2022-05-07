@@ -17,26 +17,22 @@ const attributeCollectionSchema = new mongoose.Schema({
 				required: true,
 				trim: true,
 			},
-			type: {
-				type: String,
-				required: true,
-				enum: ['text', 'text-array'],
-				default: 'Text',
-				trim: true,
-			},
 			placeholder: {
 				type: String,
 				required: true,
 				trim: true,
-            },
-            active: {
-                type: Boolean,
-                default: true,
-            },
+			},
+			active: {
+				type: Boolean,
+				default: true,
+			},
 		},
 	],
 })
 
-const AttributeCollection = mongoose.model('AttributeCollection', attributeCollectionSchema)
+const AttributeCollection = mongoose.model(
+	'AttributeCollection',
+	attributeCollectionSchema
+)
 
 module.exports = AttributeCollection

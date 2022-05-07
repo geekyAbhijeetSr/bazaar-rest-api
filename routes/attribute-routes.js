@@ -1,41 +1,15 @@
 const { Router } = require('express')
 const {
 	verifyToken,
-	isAdmin,
-	attriCollNameValidation,
-	attriCollNameValidation2,
+	authRole,
+	attriCollectionValidation,
 	attributeValidation,
-	attributeValidation2,
-	attributeDeleteValidation,
 	validate,
 } = require('../helper')
 const attributeController = require('../controllers/attribute-controller')
+const { ROLE } = require('../constants')
 
 const router = Router()
-
-// @route    POST api/attribute/create-collection
-// @desc     Create a attribute collection
-// @access   Private (Admin)
-router.post(
-	'/create-collection',
-	verifyToken,
-	isAdmin,
-	attriCollNameValidation,
-	validate,
-	attributeController.createAttriCollection
-)
-
-// @route    PUT api/attribute/add-attribute
-// @desc     Add attributes to a attribute collection
-// @access   Private (Admin)
-router.put(
-	'/add-attribute',
-	verifyToken,
-	isAdmin,
-	attributeValidation,
-	validate,
-	attributeController.addAttributes
-)
 
 // @route    GET api/attribute/all-collections
 // @desc     Get all attribute collections
@@ -43,32 +17,32 @@ router.put(
 router.get(
 	'/all-collections',
 	verifyToken,
-	isAdmin,
+	authRole(ROLE.ADMIN),
 	attributeController.getAttributeCollection
 )
 
-// @route   PUT api/attribute/update-collection
+// @route    POST api/attribute/create-collection
+// @desc     Create a attribute collection
+// @access   Private (Admin)
+router.post(
+	'/create-collection',
+	verifyToken,
+	authRole(ROLE.ADMIN),
+	attriCollectionValidation,
+	validate,
+	attributeController.createAttriCollection
+)
+
+// @route   PUT api/attribute/update-collection/:collectionId
 // @desc    Update a attribute collection
 // @access  Private (Admin)
 router.put(
-	'/update-collection',
+	'/update-collection/:collectionId',
 	verifyToken,
-	isAdmin,
-	attriCollNameValidation2,
+	authRole(ROLE.ADMIN),
+	attriCollectionValidation,
 	validate,
 	attributeController.updateAttributeCollection
-)
-
-// @route	PUT api/attribute/update-attribute
-// @desc	Update a attribute
-// @access	Private (Admin)
-router.put(
-	'/update-attribute',
-	verifyToken,
-	isAdmin,
-	attributeValidation2,
-	validate,
-	attributeController.updateAttribute
 )
 
 // @route	PUT api/attribute/toggle-collection/:collectionId
@@ -77,8 +51,42 @@ router.put(
 router.put(
 	'/toggle-collection/:collectionId',
 	verifyToken,
-	isAdmin,
+	authRole(ROLE.ADMIN),
 	attributeController.toggleActiveCollection
+)
+
+// @route	DELETE api/attribute/:id
+// @desc	Delete a attribute collection
+// @access	Private (Admin)
+router.delete(
+	'/delete-collection/:collectionId',
+	verifyToken,
+	authRole(ROLE.ADMIN),
+	attributeController.deleteAttributeCollection
+)
+
+// @route    POST api/attribute/add-attribute/:collectionId
+// @desc     Add attributes to a attribute collection
+// @access   Private (Admin)
+router.post(
+	'/add-attribute/:collectionId',
+	verifyToken,
+	authRole(ROLE.ADMIN),
+	attributeValidation,
+	validate,
+	attributeController.addAttributes
+)
+
+// @route	PUT api/attribute/update-attribute/:attributeId
+// @desc	Update a attribute
+// @access	Private (Admin)
+router.put(
+	'/update-attribute/:collectionId/:attributeId',
+	verifyToken,
+	authRole(ROLE.ADMIN),
+	attributeValidation,
+	validate,
+	attributeController.updateAttribute
 )
 
 // @route	PUT api/attribute/toggle-attribute/:collectionId/:attributeId
@@ -87,30 +95,18 @@ router.put(
 router.put(
 	'/toggle-attribute/:collectionId/:attributeId',
 	verifyToken,
-	isAdmin,
+	authRole(ROLE.ADMIN),
 	attributeController.toggleActiveAttribute
 )
 
-// @route	DELETE api/attribute/delete-attribute
+// @route	DELETE api/attribute/delete-attribute/:collectionId/:attributeId
 // @desc	Delete a attribute
 // @access	Private (Admin)
 router.delete(
-	'/delete-attribute',
+	'/delete-attribute/:collectionId/:attributeId',
 	verifyToken,
-	isAdmin,
-	attributeDeleteValidation,
-	validate,
+	authRole(ROLE.ADMIN),
 	attributeController.deleteAttribute
-)
-
-// @route	DELETE api/attribute/:id
-// @desc	Delete a attribute collection
-// @access	Private (Admin)
-router.delete(
-	'/:id',
-	verifyToken,
-	isAdmin,
-	attributeController.deleteAttributeCollection
 )
 
 module.exports = router

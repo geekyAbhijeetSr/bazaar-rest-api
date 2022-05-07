@@ -2,15 +2,24 @@ const cloudinary = require('cloudinary').v2
 const sharp = require('sharp')
 const { removeLocalFile, uid } = require('./utils')
 
+const rootFolder = 'BitMart/'
+
 cloudinary.config({
 	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
 	api_key: process.env.CLOUDINARY_API_KEY,
 	api_secret: process.env.CLOUDINARY_API_SECRET,
 })
 
-exports.uploadToCloudinary = async localFilePath => {
+exports.uploadToCloudinary = async (localFilePath, folder) => {
 	try {
-		const result = await cloudinary.uploader.upload(localFilePath)
+		const cloudinaryFolder = folder
+			? `${rootFolder}/${folder}/`
+			: `${rootFolder}/`
+
+		const result = await cloudinary.uploader.upload(localFilePath, {
+			folder: cloudinaryFolder,
+		})
+
 		removeLocalFile(localFilePath)
 		return result
 	} catch (err) {
@@ -49,6 +58,7 @@ exports.cloudinaryUrlTransformer = (url, type) => {
 
 	let params
 	switch (type) {
+		// avatar variations
 		case 'avatar':
 			params = 'c_fill,g_face,h_400,w_400,q_auto:good/'
 			break
@@ -58,6 +68,7 @@ exports.cloudinaryUrlTransformer = (url, type) => {
 		case 'avatar_small':
 			params = 'c_fill,g_face,h_200,w_200,q_auto:low/'
 			break
+		// product variations
 		case 'product':
 			params = 'c_fill,h_624,w_624,q_auto:good/'
 			break
@@ -67,6 +78,7 @@ exports.cloudinaryUrlTransformer = (url, type) => {
 		case 'product_small':
 			params = 'c_fill,h_200,w_200,q_auto:low/'
 			break
+		// quality variations
 		case 'q_good':
 			params = 'q_auto:good/'
 			break

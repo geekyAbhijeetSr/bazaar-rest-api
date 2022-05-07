@@ -7,17 +7,17 @@ exports.addToCart = async (req, res, next) => {
 		const { productId, quantity } = req.body
 
 		const cart = await Cart.findOne({ user: userId })
-        const product = await Product.findById(productId)
-        
-        if (!product) {
-            const error = new HttpError('Product not found', 404)
-            return next(error)
-        }
+		const product = await Product.findById(productId)
+
+		if (!product) {
+			const error = new HttpError('Product not found', 404)
+			return next(error)
+		}
 
 		if (!cart) {
 			const newCart = new Cart({
 				user: userId,
-				products: [{ product: productId, quantity }]
+				products: [{ product: productId, quantity }],
 			})
 
 			await newCart.save()
@@ -30,7 +30,7 @@ exports.addToCart = async (req, res, next) => {
 			const productExistInCart = cart.products.find(product => {
 				return product.product.toString() === productId
 			})
-			
+
 			if (productExistInCart) {
 				productExistInCart.quantity += quantity
 			} else {

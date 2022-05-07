@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const productSchema = mongoose.Schema(
+const productSchema = new mongoose.Schema(
 	{
 		name: {
 			type: String,
@@ -59,12 +59,10 @@ const productSchema = mongoose.Schema(
 			{
 				name: {
 					type: String,
-					require: true,
 					trim: true,
 				},
 				value: {
 					type: String,
-					require: true,
 					trim: true,
 				},
 			},

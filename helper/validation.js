@@ -2,6 +2,7 @@ const { check, body, validationResult } = require('express-validator')
 const { HttpError } = require('../error')
 const { removeLocalFile } = require('./utils')
 
+// Auth validation
 exports.signupValidation = [
 	body('firstname').notEmpty().withMessage('Firstname is required'),
 	body('lastname').notEmpty().withMessage('Lastname is required'),
@@ -16,10 +17,21 @@ exports.loginValidation = [
 	body('password').notEmpty().withMessage('Password is required'),
 ]
 
+// Attribute validation
+exports.attriCollectionValidation = [
+	body('name').notEmpty().withMessage('Name is required'),
+]
+
+exports.attributeValidation = [
+	body('name').notEmpty().withMessage('Name is required'),
+]
+
+// Category validation
 exports.categoryValidation = [
 	body('name').notEmpty().withMessage('Name is required'),
 ]
 
+// Product validation
 exports.productValidation = [
 	body('name').notEmpty().withMessage('Name is required'),
 	body('brand').notEmpty().withMessage('Brand name is required'),
@@ -44,40 +56,8 @@ exports.productValidation = [
 	}),
 ]
 
-exports.attriCollNameValidation = [
-	body('name').notEmpty().withMessage('Name is required'),
-	body('active').notEmpty().withMessage('Active is required'),
-]
-
-exports.attriCollNameValidation2 = [
-	body('id').notEmpty().withMessage('Collection Id is required'),
-	body('name').notEmpty().withMessage('Name is required'),
-	body('active').notEmpty().withMessage('Active is required'),
-]
-
-exports.attributeValidation = [
-	body('collectionId').notEmpty().withMessage('Collection Id is required'),
-	body('name').notEmpty().withMessage('Name is required'),
-	body('type').notEmpty().withMessage('Type is required'),
-	body('active').notEmpty().withMessage('Active is required'),
-]
-
-exports.attributeValidation2 = [
-	body('collectionId').notEmpty().withMessage('Collection Id is required'),
-	body('attributeId').notEmpty().withMessage('Attribute Id is required'),
-	body('name').notEmpty().withMessage('Name is required'),
-	body('type').notEmpty().withMessage('Type is required'),
-	body('active').notEmpty().withMessage('Active is required'),
-]
-
-exports.attributeDeleteValidation = [
-	body('collectionId').notEmpty().withMessage('Collection Id is required'),
-	body('attributeId').notEmpty().withMessage('Attribute Id is required'),
-]
-
 exports.validate = (req, res, next) => {
 	const errors = validationResult(req)
-	console.log("req.files: ", req.files)
 	if (!errors.isEmpty()) {
 		if (req.file) {
 			removeLocalFile(req.file.path)

@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
 			},
 			cloudinaryId: {
 				type: String,
-			}
+			},
 		},
 		email: {
 			type: String,
@@ -39,13 +39,9 @@ const userSchema = new mongoose.Schema(
 		},
 		role: {
 			type: String,
-			enum: ['user', 'admin', 'superadmin'],
+			enum: ['admin', 'vendor', 'customer'],
 			default: 'user',
 			required: true,
-		},
-		isVerified: {
-			type: Boolean,
-			default: false,
 		},
 	},
 	{

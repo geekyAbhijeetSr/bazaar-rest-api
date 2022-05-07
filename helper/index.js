@@ -3,15 +3,12 @@ const {
 	loginValidation,
 	categoryValidation,
 	productValidation,
-	attriCollNameValidation,
-	attriCollNameValidation2,
+	attriCollectionValidation,
 	attributeValidation,
-	attributeValidation2,
-	attributeDeleteValidation,
 	validate,
 } = require('./validation')
 
-const { verifyToken, isAdmin, isUser } = require('./authentication')
+const { verifyToken, authRole } = require('./authentication')
 
 const {
 	removeLocalFile,
@@ -48,17 +45,13 @@ module.exports = {
 	loginValidation,
 	categoryValidation,
 	productValidation,
-	attriCollNameValidation,
-	attriCollNameValidation2,
+	attriCollectionValidation,
 	attributeValidation,
-	attributeValidation2,
-	attributeDeleteValidation,
 	validate,
 
 	// from authentication.js
 	verifyToken,
-	isAdmin,
-	isUser,
+	authRole,
 
 	// from multer-config.js
 	multerUploadFile,

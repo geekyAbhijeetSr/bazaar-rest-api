@@ -1,13 +1,14 @@
 const { Router } = require('express')
 const {
 	verifyToken,
-	isAdmin,
+	authRole,
 	categoryValidation,
 	multerUploadFile,
 	multerValidate,
 	validate,
 } = require('../helper')
 const categoryController = require('../controllers/category-controller')
+const { ROLE } = require('../constants')
 
 const router = Router()
 
@@ -17,7 +18,7 @@ const router = Router()
 router.post(
 	'/create',
 	verifyToken,
-	isAdmin,
+	authRole(ROLE.ADMIN),
 	multerUploadFile('image'),
 	categoryValidation,
 	validate,
@@ -36,7 +37,7 @@ router.get('/all', categoryController.getCategories)
 router.put(
 	'/:catId',
 	verifyToken,
-	isAdmin,
+	authRole(ROLE.ADMIN),
 	multerUploadFile('image'),
 	categoryValidation,
 	validate,
@@ -50,7 +51,7 @@ router.put(
 router.put(
 	'/toggle/:catId',
 	verifyToken,
-	isAdmin,
+	authRole(ROLE.ADMIN),
 	categoryController.toggleActiveCategory
 )
 
@@ -60,7 +61,7 @@ router.put(
 router.delete(
 	'/:catId',
 	verifyToken,
-	isAdmin,
+	authRole(ROLE.ADMIN),
 	categoryController.deleteCategory
 )
 
