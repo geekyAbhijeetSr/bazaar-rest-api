@@ -13,11 +13,9 @@ const router = Router()
 
 // @route    GET api/attribute/all-collections
 // @desc     Get all attribute collections
-// @access   Private (Admin)
+// @access   Public
 router.get(
 	'/all-collections',
-	verifyToken,
-	authRole(ROLE.ADMIN),
 	attributeController.getAttributeCollection
 )
 

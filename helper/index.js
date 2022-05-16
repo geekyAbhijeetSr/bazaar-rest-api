@@ -21,6 +21,7 @@ const {
 	avatarPlaceholder,
 	removeOldFiles,
 	paginatedResponse,
+	scopedPaginatedResponse,
 } = require('./utils')
 
 const {
@@ -76,4 +77,5 @@ module.exports = {
 	avatarPlaceholder,
 	removeOldFiles,
 	paginatedResponse,
+	scopedPaginatedResponse,
 }

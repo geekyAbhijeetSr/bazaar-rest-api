@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const { HttpError } = require('../error')
 const { User } = require('../models')
-const { capitalize } = require('../helper')
+const { capitalize } = require('./utils')
 
 exports.verifyToken = async (req, res, next) => {
 	try {
@@ -26,7 +26,7 @@ exports.authRole = role => {
 		try {
 			const user = await User.findById(req.tokenPayload.userId)
 			if (!user) {
-				const error = new HttpError(`${capitalize(role)} not found`, 404)
+				const error = new HttpError(`${capitalize(user)} not found`, 404)
 				return next(error)
 			}
 			if (req.tokenPayload.role !== role) {

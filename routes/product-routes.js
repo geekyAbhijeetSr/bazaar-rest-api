@@ -7,6 +7,7 @@ const {
 	productValidation,
 	validate,
 	paginatedResponse,
+	scopedPaginatedResponse,
 } = require('../helper')
 const { Product } = require('../models')
 const { ROLE } = require('../constants')
@@ -39,6 +40,16 @@ router.post(
 // @desc     Get all products
 // @access   Public
 router.get('/get', paginatedResponse(Product), productController.getProducts)
+
+// @route    GET api/product/dashboard-get?page=x&limit=y
+// @desc     Get all products
+// @access   Private
+router.get(
+	'/dashboard-get',
+	verifyToken,
+	scopedPaginatedResponse(Product),
+	productController.getProducts
+)
 
 // @route	GET api/product/:id
 // @desc	Get a product by id
