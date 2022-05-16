@@ -5,13 +5,8 @@ const errorHandler = (err, req, res, next) => {
 
 	const { message = 'Internal Server Error', statusCode = 500 } = err
 
-	let key = 'error'
-	if (Array.isArray(message)) {
-		key = 'errors'
-	}
-
 	res.status(statusCode).json({
-		[key]: message,
+		error: Array.isArray(message) ? message[0].msg : message
 	})
 }
 
