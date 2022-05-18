@@ -7,9 +7,9 @@ const {
 	productRoutes,
 	cartRoutes,
 	attributeRoutes,
-} = require('./routes')
-const { errorHandler, unknownRoutesHandler } = require('./error')
-const { start } = require('./helper')
+} = require('./api/routes')
+const { errorHandler, unknownRoutesHandler } = require('./api/error')
+const { start } = require('./config')
 
 const server = express()
 

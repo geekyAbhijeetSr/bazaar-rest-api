@@ -1,15 +1,15 @@
 const { HttpError } = require('../error')
 const { User } = require('../models')
 const {
-	capitalize,
-	compressImage,
-	uploadToCloudinary,
-	cloudinaryUrlTransformer,
-	removeLocalFile,
-	avatarPlaceholder,
+	utils: { capitalize, avatarPlaceholder },
+	fs_: { removeLocalFile },
 } = require('../helper')
-
-const expiresIn = 24 * 60 * 60 * 1000
+const {
+	cloudinary_: { compressImage, uploadToCloudinary, cloudinaryUrlTransformer },
+} = require('../../config')
+const {
+	constants: { EXPIRES_IN },
+} = require('../../config')
 
 exports.signup = async (req, res, next) => {
 	try {
@@ -62,7 +62,7 @@ exports.signup = async (req, res, next) => {
 
 		await user.save()
 
-		const token = await user.generateAuthToken(expiresIn)
+		const token = await user.generateAuthToken(EXPIRES_IN)
 
 		user.password = undefined
 		res
@@ -70,12 +70,12 @@ exports.signup = async (req, res, next) => {
 			.cookie('jwt', token, {
 				httpOnly: true,
 				sameSite: 'strict',
-				maxAge: expiresIn,
+				maxAge: EXPIRES_IN,
 			})
 			.json({
 				message: `${capitalize(user.role)} registered successfully`,
 				user,
-				exp: new Date().getTime() + expiresIn,
+				exp: new Date().getTime() + EXPIRES_IN,
 			})
 	} catch (err) {
 		req.file && removeLocalFile(req.file.path)
@@ -114,7 +114,7 @@ exports.login = async (req, res, next) => {
 			return next(error)
 		}
 
-		const token = await user.generateAuthToken(expiresIn)
+		const token = await user.generateAuthToken(EXPIRES_IN)
 
 		user.password = undefined
 		res
@@ -122,12 +122,12 @@ exports.login = async (req, res, next) => {
 			.cookie('jwt', token, {
 				httpOnly: true,
 				sameSite: 'strict',
-				maxAge: expiresIn,
+				maxAge: EXPIRES_IN,
 			})
 			.json({
 				message: 'Logged in successfully',
 				user,
-				exp: new Date().getTime() + expiresIn,
+				exp: new Date().getTime() + EXPIRES_IN,
 			})
 	} catch (err) {
 		const error = new HttpError('Login failed', 500)

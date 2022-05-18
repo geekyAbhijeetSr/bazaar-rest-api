@@ -1,23 +1,19 @@
 const { Router } = require('express')
-const {
-	verifyToken,
-	authRole,
-	attriCollectionValidation,
-	attributeValidation,
-	validate,
-} = require('../helper')
 const attributeController = require('../controllers/attribute-controller')
-const { ROLE } = require('../constants')
+const {
+	validation: { attriCollectionValidation, attributeValidation, validate },
+	authentication: { verifyToken, authRole },
+} = require('../middleware')
+const {
+	constants: { ROLE },
+} = require('../../config')
 
 const router = Router()
 
 // @route    GET api/attribute/all-collections
 // @desc     Get all attribute collections
 // @access   Public
-router.get(
-	'/all-collections',
-	attributeController.getAttributeCollection
-)
+router.get('/all-collections', attributeController.getAttributeCollection)
 
 // @route    POST api/attribute/create-collection
 // @desc     Create a attribute collection

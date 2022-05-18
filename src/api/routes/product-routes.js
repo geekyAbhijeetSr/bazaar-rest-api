@@ -1,16 +1,15 @@
 const { Router } = require('express')
+const { Product } = require('../models')
 const productController = require('../controllers/product-controller')
 const {
-	verifyToken,
-	authRole,
-	multerUploadMultiFile,
-	productValidation,
-	validate,
-	paginatedResponse,
-	scopedPaginatedResponse,
-} = require('../helper')
-const { Product } = require('../models')
-const { ROLE } = require('../constants')
+	authentication: { verifyToken, authRole },
+	validation: { productValidation, validate },
+	pagination: { paginatedResponse, scopedPaginatedResponse },
+} = require('../middleware')
+const {
+	constants: { ROLE },
+	multer_: { multerUploadMultiFile },
+} = require('../../config')
 
 const router = Router()
 

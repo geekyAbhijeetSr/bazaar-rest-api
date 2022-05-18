@@ -1,14 +1,17 @@
 const { HttpError } = require('../error')
 const { Product } = require('../models')
 const {
-	capitalize,
-	compressImage,
-	uploadToCloudinary,
-	cloudinaryUrlTransformer,
-	deleteFromCloudinary,
-	removeLocalFile,
-	convertToSlug,
+	utils: { capitalize, convertToSlug },
+	fs_: { removeLocalFile },
 } = require('../helper')
+const {
+	cloudinary_: {
+		compressImage,
+		uploadToCloudinary,
+		deleteFromCloudinary,
+		cloudinaryUrlTransformer,
+	},
+} = require('../../config')
 
 exports.createProduct = async (req, res, next) => {
 	try {

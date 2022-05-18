@@ -1,14 +1,17 @@
 const { HttpError } = require('../error')
 const { Category } = require('../models')
 const {
-	categoriesToTree,
-	convertToSlug,
-	compressImage,
-	uploadToCloudinary,
-	deleteFromCloudinary,
-	cloudinaryUrlTransformer,
-	removeLocalFile,
+	utils: { convertToSlug, categoriesToTree },
+	fs_: { removeLocalFile },
 } = require('../helper')
+const {
+	cloudinary_: {
+		compressImage,
+		uploadToCloudinary,
+		deleteFromCloudinary,
+		cloudinaryUrlTransformer,
+	},
+} = require('../../config')
 
 exports.createCategory = async (req, res, next) => {
 	try {

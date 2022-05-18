@@ -1,6 +1,9 @@
 const cloudinary = require('cloudinary').v2
 const sharp = require('sharp')
-const { removeLocalFile, uid } = require('./utils')
+const {
+	utils: { uid },
+	fs_: { removeLocalFile },
+} = require('../api/helper')
 
 const rootFolder = 'BitMart/'
 

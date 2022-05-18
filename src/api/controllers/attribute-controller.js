@@ -1,4 +1,3 @@
-const e = require('express')
 const { HttpError } = require('../error')
 const { AttributeCollection } = require('../models')
 

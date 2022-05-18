@@ -1,14 +1,13 @@
 const { Router } = require('express')
-const {
-	verifyToken,
-	authRole,
-	categoryValidation,
-	multerUploadFile,
-	multerValidate,
-	validate,
-} = require('../helper')
 const categoryController = require('../controllers/category-controller')
-const { ROLE } = require('../constants')
+const {
+	authentication: { verifyToken, authRole },
+	validation: { categoryValidation, validate },
+} = require('../middleware')
+const {
+	multer_: { multerUploadFile, multerValidate },
+	constants: { ROLE },
+} = require('../../config')
 
 const router = Router()
 

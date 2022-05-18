@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
-const { removeOldFiles } = require('./utils')
+const {
+	fs_: { removeOldFiles },
+} = require('../api/helper')
 
 const URI = process.env.MONGODB_URI
 const PORT = process.env.PORT || 5000
@@ -7,13 +9,14 @@ const PORT = process.env.PORT || 5000
 const start = async server => {
 	try {
 		await mongoose.connect(URI)
-		console.log('Connected to MongoDB')
+		console.log('\nConnected to MongoDB')
 		server.listen(PORT, () => {
-			console.log(`Server is running on port ${PORT}`)
+			console.log(`Server is running on port ${PORT}\n`)
 		})
 
-		const intervalTime = 1 * 60 * 60 * 1000
-		const time = 60 * 60 * 1000
+		const intervalTime = 1 * 60 * 60 * 1000 // interval will run every 1 hour
+		const time = 1 * 60 * 60 * 1000 // 1 hour and more than 1 hour old files will be deleted
+
 		setInterval(async () => {
 			removeOldFiles('uploads', time, true)
 		}, intervalTime)

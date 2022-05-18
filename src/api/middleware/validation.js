@@ -1,6 +1,8 @@
 const { check, body, validationResult } = require('express-validator')
 const { HttpError } = require('../error')
-const { removeLocalFile } = require('./utils')
+const {
+	fs_: { removeLocalFile },
+} = require('../helper')
 
 // Auth validation
 exports.signupValidation = [

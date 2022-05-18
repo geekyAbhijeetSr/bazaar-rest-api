@@ -1,7 +1,10 @@
 const multer = require('multer')
 const fs = require('fs')
-const { HttpError } = require('../error')
-const { getExt, uid } = require('./utils')
+const { HttpError } = require('../api/error')
+const {
+	utils: { uid },
+	fs_: { getExt },
+} = require('../api/helper')
 
 const errorMessage = {
 	LIMIT_FILE_SIZE: 'File size should not be more than 2MB',
