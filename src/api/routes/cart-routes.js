@@ -15,7 +15,7 @@ const router = Router()
 router.post(
 	'/add',
 	verifyToken,
-	authRole(ROLE.CUSTOMER),
+	authRole([ROLE.CUSTOMER]),
 	cartController.addToCart
 )
 

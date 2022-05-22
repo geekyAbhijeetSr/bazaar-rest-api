@@ -23,7 +23,7 @@ exports.verifyToken = async (req, res, next) => {
 	}
 }
 
-exports.authRole = role => {
+exports.authRole = roles => {
 	return async (req, res, next) => {
 		try {
 			const user = await User.findById(req.tokenPayload.userId)
@@ -31,8 +31,8 @@ exports.authRole = role => {
 				const error = new HttpError(`${capitalize(user)} not found`, 404)
 				return next(error)
 			}
-			if (req.tokenPayload.role !== role) {
-				const error = new HttpError(`Access denied! you are not ${role}.`, 403)
+			if (!roles.includes(user.role)) {
+				const error = new HttpError(`Access denied! you are not ${roles}.`, 403)
 				return next(error)
 			}
 			req.user = user

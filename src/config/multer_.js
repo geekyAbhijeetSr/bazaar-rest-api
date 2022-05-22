@@ -35,16 +35,16 @@ const storage = multer.diskStorage({
 })
 
 const fileFilter = (req, file, cb) => {
-	const allowedMimes = new Set([
+	const allowedMimes = [
 		'image/jpeg',
 		'image/pjpeg',
 		'image/png',
 		'image/gif',
 		'image/svg+xml',
 		'image/webp',
-	])
+	]
 
-	if (allowedMimes.has(file.mimetype)) return cb(null, true)
+	if (allowedMimes.includes(file.mimetype)) return cb(null, true)
 
 	req.multerError = errorMessage['FILE_TYPE_ERROR']
 	return cb(null, false)

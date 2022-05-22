@@ -17,7 +17,7 @@ const router = Router()
 router.post(
 	'/create',
 	verifyToken,
-	authRole(ROLE.ADMIN),
+	authRole([[ROLE.ADMIN]]),
 	multerUploadFile('image'),
 	categoryValidation,
 	validate,
@@ -36,7 +36,7 @@ router.get('/all', categoryController.getCategories)
 router.put(
 	'/:catId',
 	verifyToken,
-	authRole(ROLE.ADMIN),
+	authRole([ROLE.ADMIN]),
 	multerUploadFile('image'),
 	categoryValidation,
 	validate,
@@ -50,7 +50,7 @@ router.put(
 router.put(
 	'/toggle/:catId',
 	verifyToken,
-	authRole(ROLE.ADMIN),
+	authRole([ROLE.ADMIN]),
 	categoryController.toggleActiveCategory
 )
 
@@ -60,7 +60,7 @@ router.put(
 router.delete(
 	'/:catId',
 	verifyToken,
-	authRole(ROLE.ADMIN),
+	authRole([ROLE.ADMIN]),
 	categoryController.deleteCategory
 )
 

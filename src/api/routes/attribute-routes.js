@@ -21,7 +21,7 @@ router.get('/all-collections', attributeController.getAttributeCollection)
 router.post(
 	'/create-collection',
 	verifyToken,
-	authRole(ROLE.ADMIN),
+	authRole([ROLE.ADMIN]),
 	attriCollectionValidation,
 	validate,
 	attributeController.createAttriCollection
@@ -33,7 +33,7 @@ router.post(
 router.put(
 	'/update-collection/:collectionId',
 	verifyToken,
-	authRole(ROLE.ADMIN),
+	authRole([ROLE.ADMIN]),
 	attriCollectionValidation,
 	validate,
 	attributeController.updateAttributeCollection
@@ -45,7 +45,7 @@ router.put(
 router.put(
 	'/toggle-collection/:collectionId',
 	verifyToken,
-	authRole(ROLE.ADMIN),
+	authRole([ROLE.ADMIN]),
 	attributeController.toggleActiveCollection
 )
 
@@ -55,7 +55,7 @@ router.put(
 router.delete(
 	'/delete-collection/:collectionId',
 	verifyToken,
-	authRole(ROLE.ADMIN),
+	authRole([ROLE.ADMIN]),
 	attributeController.deleteAttributeCollection
 )
 
@@ -65,7 +65,7 @@ router.delete(
 router.post(
 	'/add-attribute/:collectionId',
 	verifyToken,
-	authRole(ROLE.ADMIN),
+	authRole([ROLE.ADMIN]),
 	attributeValidation,
 	validate,
 	attributeController.addAttributes
@@ -77,7 +77,7 @@ router.post(
 router.put(
 	'/update-attribute/:collectionId/:attributeId',
 	verifyToken,
-	authRole(ROLE.ADMIN),
+	authRole([ROLE.ADMIN]),
 	attributeValidation,
 	validate,
 	attributeController.updateAttribute
@@ -89,7 +89,7 @@ router.put(
 router.put(
 	'/toggle-attribute/:collectionId/:attributeId',
 	verifyToken,
-	authRole(ROLE.ADMIN),
+	authRole([ROLE.ADMIN]),
 	attributeController.toggleActiveAttribute
 )
 
@@ -99,7 +99,7 @@ router.put(
 router.delete(
 	'/delete-attribute/:collectionId/:attributeId',
 	verifyToken,
-	authRole(ROLE.ADMIN),
+	authRole([ROLE.ADMIN]),
 	attributeController.deleteAttribute
 )
 

@@ -28,7 +28,7 @@ const multerFilesFields = [
 router.post(
 	'/create',
 	verifyToken,
-	authRole(ROLE.VENDOR),
+	authRole([ROLE.ADMIN, ROLE.VENDOR]),
 	multerUploadMultiFile(multerFilesFields),
 	productValidation,
 	validate,
@@ -61,7 +61,7 @@ router.get('/:id', productController.getProductById)
 router.delete(
 	'/:id',
 	verifyToken,
-	authRole(ROLE.VENDOR),
+	authRole([ROLE.ADMIN, ROLE.VENDOR]),
 	productController.deleteProduct
 )
 
