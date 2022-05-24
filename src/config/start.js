@@ -15,7 +15,7 @@ const start = async server => {
 		})
 
 		const intervalTime = 1 * 60 * 60 * 1000 // interval will run every 1 hour
-		const time = 1 * 60 * 60 * 1000 // 1 hour and more than 1 hour old files will be deleted
+		const time = 1 * 60 * 60 * 1000 // 1 hour and more than 1 hour old files will be removed
 
 		setInterval(async () => {
 			removeOldFiles('uploads', time, true)

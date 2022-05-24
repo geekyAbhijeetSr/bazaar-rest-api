@@ -67,7 +67,7 @@ exports.createCategory = async (req, res, next) => {
 		})
 
 		res.status(201).json({
-			message: 'Category created successfully',
+			message: 'Category added successfully',
 			category,
 		})
 	} catch (err) {
@@ -214,7 +214,7 @@ exports.deleteCategory = async (req, res, next) => {
 		await Category.findByIdAndDelete(req.params.catId)
 
 		res.status(200).json({
-			message: 'Category deleted successfully',
+			message: 'Category removed successfully',
 			categoryId: req.params.catId,
 		})
 	} catch (err) {

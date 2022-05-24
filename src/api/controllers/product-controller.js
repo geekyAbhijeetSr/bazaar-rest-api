@@ -88,7 +88,7 @@ exports.createProduct = async (req, res, next) => {
 		})
 
 		res.status(201).json({
-			message: 'Product created successfully',
+			message: 'Product added successfully',
 			product,
 		})
 	} catch (err) {
@@ -99,7 +99,7 @@ exports.createProduct = async (req, res, next) => {
 			})
 		})
 		const error = new HttpError(
-			'Something went wrong, could not create product.',
+			'Something went wrong, could not add product.',
 			500
 		)
 		return next(error)
@@ -170,7 +170,7 @@ exports.deleteProduct = async (req, res, next) => {
 			const result = await deleteFromCloudinary(image.cloudinaryId)
 			if (result !== 'ok') {
 				const error = new HttpError(
-					'Something went wrong, could not delete product.',
+					'Something went wrong, could not remove product.',
 					500
 				)
 				return next(error)
@@ -180,11 +180,11 @@ exports.deleteProduct = async (req, res, next) => {
 		await product.remove()
 
 		res.status(200).json({
-			message: 'Product deleted successfully',
+			message: 'Product removed successfully',
 		})
 	} catch (err) {
 		const error = new HttpError(
-			'Something went wrong, could not delete product.',
+			'Something went wrong, could not remove product.',
 			500
 		)
 		return next(error)

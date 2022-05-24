@@ -35,7 +35,7 @@ exports.createAttriCollection = async (req, res, next) => {
 		await collection.save()
 
 		res.status(201).json({
-			message: 'Attribute collection created successfully',
+			message: 'Attribute collection added successfully',
 			attributeCollection: collection,
 		})
 	} catch (err) {
@@ -109,7 +109,7 @@ exports.deleteAttributeCollection = async (req, res, next) => {
 		await existCollection.remove()
 
 		res.status(200).json({
-			message: 'Attribute collection deleted successfully',
+			message: 'Attribute collection removed successfully',
 			collectionId,
 		})
 	} catch (err) {
@@ -257,7 +257,7 @@ exports.deleteAttribute = async (req, res, next) => {
 		await existCollection.save()
 
 		res.status(200).json({
-			message: 'Attribute deleted successfully',
+			message: 'Attribute removed successfully',
 			attributeCollection: existCollection,
 		})
 	} catch (err) {
