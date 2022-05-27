@@ -51,7 +51,6 @@ exports.createProduct = async (req, res, next) => {
 		// and all keys(names of different image input fields)
 		// of that object have array of files
 		for (let key in req.files) {
-			console.log(req.files[key])
 			const imageFile = req.files[key][0]
 			const compressedImgPath = await compressImage(imageFile.path)
 			const result = await uploadToCloudinary(compressedImgPath, 'products')
@@ -95,7 +94,6 @@ exports.createProduct = async (req, res, next) => {
 			product,
 		})
 	} catch (err) {
-		console.log(err)
 		const keys = Object.keys(req.files)
 		keys.forEach(key => {
 			req.files[key].forEach(file => {
