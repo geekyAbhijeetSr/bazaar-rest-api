@@ -46,9 +46,8 @@ exports.createProduct = async (req, res, next) => {
 		category.thirdLevel = thirdLevelCat
 
 		const images = []
-		const keys = Object.keys(req.files)
 
-		for (let key of keys) {
+		for (let key in req.files) {
 			const imageFile = req.files[key][0]
 			const compressedImgPath = await compressImage(imageFile.path)
 			const result = await uploadToCloudinary(compressedImgPath, 'products')
