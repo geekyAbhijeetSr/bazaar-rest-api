@@ -45,7 +45,7 @@ exports.createProduct = async (req, res, next) => {
 		category.secondLevel = secondLevelCat
 		category.thirdLevel = thirdLevelCat
 
-		const images = []
+		const images = {}
 
 		// req.files is an object containing all the files uploaded 
 		// and all keys(names of different image input fields)
@@ -64,7 +64,7 @@ exports.createProduct = async (req, res, next) => {
 				cloudinaryId: publicId,
 			}
 
-			images.push(image)
+			images[key] = image
 		}
 
 		const productObj = {
