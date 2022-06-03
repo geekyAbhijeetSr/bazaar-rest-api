@@ -17,7 +17,10 @@ exports.paginatedResponse = model => {
 			results.fetchedDocs = docs.length
 			results.limit = limit
 			results.totalDocs = totalDocs
-			results.currentPage = page
+
+			if (docs.length > 0) {
+				results.currentPage = page
+			}
 
 			if (endIndex < totalDocs) {
 				results.nextPage = page + 1
@@ -29,14 +32,13 @@ exports.paginatedResponse = model => {
 
 			results.docs = docs
 
-			res.paginatedResults = results
+			res.locals.paginatedResults = results
+
+			console.log(results)
 
 			next()
 		} catch (e) {
-			const error = new HttpError(
-				'Something went wrong, could not get paginated results.',
-				500
-			)
+			const error = new HttpError()
 			return next(error)
 		}
 	}
@@ -73,7 +75,10 @@ exports.scopedPaginatedResponse = model => {
 			results.fetchedDocs = docs.length
 			results.limit = limit
 			results.totalDocs = totalDocs
-			results.currentPage = page
+
+			if (docs.length > 0) {
+				results.currentPage = page
+			}
 
 			if (endIndex < totalDocs) {
 				results.nextPage = page + 1
@@ -85,7 +90,7 @@ exports.scopedPaginatedResponse = model => {
 
 			results.docs = docs
 
-			res.paginatedResults = results
+			res.locals.paginatedResults = results
 
 			next()
 		} catch (e) {

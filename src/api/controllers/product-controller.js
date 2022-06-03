@@ -110,21 +110,20 @@ exports.createProduct = async (req, res, next) => {
 
 exports.getProducts = async (req, res, next) => {
 	try {
-		const { docs } = res.paginatedResults
+		const { paginatedResults } = res.locals
 
-		await Product.populate(docs, {
+		await Product.populate(paginatedResults.docs, {
 			path: 'category.topLevel category.secondLevel category.thirdLevel createdBy',
 		})
 
-		res.paginatedResults.docs = docs
-
-		const products = res.paginatedResults
+		const products = paginatedResults
 
 		res.status(200).json({
 			message: 'Products fetched successfully',
 			products,
 		})
 	} catch (err) {
+		console.log(err)
 		const error = new HttpError(
 			'Something went wrong, could not fetch products.',
 			500

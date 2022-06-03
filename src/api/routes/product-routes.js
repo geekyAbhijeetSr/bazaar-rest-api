@@ -5,6 +5,7 @@ const {
 	authentication: { verifyToken, authRole },
 	validation: { productValidation, validate },
 	pagination: { paginatedResponse, scopedPaginatedResponse },
+	permissions: { canDelete },
 } = require('../middleware')
 const {
 	constants: { ROLE },
@@ -62,6 +63,7 @@ router.delete(
 	'/:id',
 	verifyToken,
 	authRole([ROLE.ADMIN, ROLE.VENDOR]),
+	canDelete(Product, 'Product not found', 'You are not allowed to delete this product'),
 	productController.deleteProduct
 )
 
