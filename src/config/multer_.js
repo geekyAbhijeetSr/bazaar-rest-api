@@ -3,8 +3,10 @@ const fs = require('fs')
 const { HttpError } = require('../api/error')
 const {
 	utils: { uid },
-	fs_: { getExt },
+	fs_: { getExt, removeOldFiles },
 } = require('../api/helper')
+
+const uploadDir = 'uploads'
 
 const errorMessage = {
 	LIMIT_FILE_SIZE: 'File size should not be more than 2MB',
@@ -18,10 +20,10 @@ const errorMessage = {
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		if (!fs.existsSync('uploads/compressed')) {
-			fs.mkdirSync('uploads/compressed', { recursive: true })
+		if (!fs.existsSync(`${uploadDir}/compressed`)) {
+			fs.mkdirSync(`${uploadDir}/compressed`, { recursive: true })
 		}
-		cb(null, 'uploads')
+		cb(null, uploadDir)
 	},
 	filename: function (req, file, cb) {
 		const ext = getExt(file.originalname)
@@ -113,4 +115,15 @@ exports.multerValidate = (req, res, next) => {
 		return next(error)
 	}
 	return next()
+}
+
+exports.removeUploadsOnInterval = async (
+	intervalTime,
+	time = 60 * 60 * 1000
+) => {
+	// intervalTime: time of interval in milliseconds
+	// time: time of how old files should be removed in milliseconds
+	setInterval(async () => {
+		removeOldFiles(uploadDir, time, true)
+	}, intervalTime)
 }

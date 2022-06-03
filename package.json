@@ -4,8 +4,8 @@
 	"description": "Rest Api of E-Commerce",
 	"main": "server.js",
 	"scripts": {
-		"start": "node ./src/server.js",
-		"server": "nodemon ./src/server.js"
+		"start": "node ./src/start.js",
+		"dev-server": "nodemon -r dotenv/config ./src/start.js dotenv_config_path=./src/config/env/dev.env dotenv_config_debug=true"
 	},
 	"keywords": [
 		"e-commerce",
@@ -19,6 +19,7 @@
 		"cloudinary": "^1.29.1",
 		"cookie-parser": "^1.4.6",
 		"cors": "^2.8.5",
+		"dotenv": "^16.0.1",
 		"express": "^4.18.1",
 		"express-validator": "^6.14.0",
 		"jsonwebtoken": "^8.5.1",

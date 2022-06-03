@@ -1,30 +1,29 @@
-const express = require('express')
-const cookieParser = require('cookie-parser')
-const cors = require('cors')
+const { createServer } = require('./config')
+const routes = require('./api/routes')
 const {
-	authRoutes,
-	categoryRoutes,
-	productRoutes,
-	cartRoutes,
-	attributeRoutes,
-} = require('./api/routes')
+	multer_: { removeUploadsOnInterval },
+} = require('./config')
 const { errorHandler, unknownRoutesHandler } = require('./api/error')
-const { start } = require('./config')
 
-const server = express()
+const server = createServer()
 
-server.use(express.json())
-server.use(cookieParser())
-server.use(cors({ origin: ['http://localhost:3000'], credentials: true }))
-
-server.use('/api/auth', authRoutes)
-server.use('/api/attribute', attributeRoutes)
-server.use('/api/category', categoryRoutes)
-server.use('/api/product', productRoutes)
-server.use('/api/cart', cartRoutes)
+server.use('/api/auth', routes.authRoutes)
+server.use('/api/attribute', routes.attributeRoutes)
+server.use('/api/category', routes.categoryRoutes)
+server.use('/api/product', routes.productRoutes)
+server.use('/api/cart', routes.cartRoutes)
 
 server.use(unknownRoutesHandler)
 
 server.use(errorHandler)
 
-start(server)
+module.exports = server
+
+// =====================================================
+// Remove old files from uploads folder on an interval
+// =====================================================
+//
+// first argument: time of interval in milliseconds
+// second argument: time of how old files should be removed in milliseconds
+
+removeUploadsOnInterval(1 * 60 * 60 * 1000, 1 * 60 * 60 * 1000)

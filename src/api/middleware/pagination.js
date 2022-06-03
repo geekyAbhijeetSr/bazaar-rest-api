@@ -34,8 +34,6 @@ exports.paginatedResponse = model => {
 
 			res.locals.paginatedResults = results
 
-			console.log(results)
-
 			next()
 		} catch (e) {
 			const error = new HttpError()
