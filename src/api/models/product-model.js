@@ -58,11 +58,19 @@ const productSchema = new mongoose.Schema(
 		},
 		properties: [
 			{
+				label: {
+					type: String,
+					trim: true,
+				},
 				name: {
 					type: String,
 					trim: true,
 				},
 				value: {
+					type: String,
+					trim: true,
+				},
+				placeholder: {
 					type: String,
 					trim: true,
 				},

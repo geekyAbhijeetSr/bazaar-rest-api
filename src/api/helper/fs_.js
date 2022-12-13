@@ -7,7 +7,7 @@ const removeLocalFile = async filePath => {
 			if (err && err.code == 'ENOENT') {
 				console.log("Error! File doesn't exist.")
 			} else if (err) {
-				console.log('Something went wrong.')
+				console.log('Something went wrong')
 			} else {
 				console.log(`Successfully removed file with the path of ${filePath}`)
 			}

@@ -1,21 +1,23 @@
 const { HttpError } = require('../error')
 
-exports.canDelete = (model, notFoundError, notAllowedError) => {
-  return async (req, res, next) => {
-    const { id } = req.params
+exports.canModify = (model, notFoundError, notAllowedError) => {
+	return async (req, res, next) => {
+		const { id } = req.params
 
-    const doc = await model.findById(id)
+		const doc = await model.findById(id)
 
-    if (!doc) {
-      throw new HttpError(notFoundError)
-    }
+		if (!doc) {
+			const error = new HttpError(notFoundError)
+			return next(error)
+		}
 
-    if (doc.userId !== req.user.id) {
-      throw new HttpError(notAllowedError)
-    }
+		if (doc.createdBy.toString() !== req.user.id) {
+			const error = new HttpError(notAllowedError)
+			return next(error)
+		}
 
-    req.doc = doc
+		req.doc = doc
 
-    next()
-  };
+		next()
+	}
 }

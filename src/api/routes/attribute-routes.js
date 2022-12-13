@@ -1,12 +1,12 @@
 const { Router } = require('express')
 const attributeController = require('../controllers/attribute-controller')
 const {
-	validation: { attriCollectionValidation, attributeValidation, validate },
-	authentication: { verifyToken, authRole },
-} = require('../middleware')
-const {
-	constants: { ROLE },
-} = require('../../config')
+	attriCollectionValidation,
+	attributeValidation,
+	validate,
+} = require('../middleware/validation')
+const { verifyToken, authRole } = require('../middleware/authentication')
+const { ROLE } = require('../../config/constants')
 
 const router = Router()
 

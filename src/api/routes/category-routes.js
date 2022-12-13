@@ -1,13 +1,9 @@
 const { Router } = require('express')
 const categoryController = require('../controllers/category-controller')
-const {
-	authentication: { verifyToken, authRole },
-	validation: { categoryValidation, validate },
-} = require('../middleware')
-const {
-	multer_: { multerUploadFile, multerValidate },
-	constants: { ROLE },
-} = require('../../config')
+const { verifyToken, authRole } = require('../middleware/authentication')
+const { categoryValidation, validate } = require('../middleware/validation')
+const { multerUploadFile, multerValidate } = require('../../config/multer_')
+const { ROLE } = require('../../config/constants')
 
 const router = Router()
 
@@ -17,7 +13,7 @@ const router = Router()
 router.post(
 	'/create',
 	verifyToken,
-	authRole([[ROLE.ADMIN]]),
+	authRole([ROLE.ADMIN]),
 	multerUploadFile('image'),
 	categoryValidation,
 	validate,

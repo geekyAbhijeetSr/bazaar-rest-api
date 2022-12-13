@@ -1,12 +1,12 @@
 const { Router } = require('express')
 const authController = require('../controllers/auth-controller')
+const { verifyToken } = require('../middleware/authentication')
 const {
-	authentication: { verifyToken },
-	validation: { signupValidation, loginValidation, validate },
-} = require('../middleware')
-const {
-	multer_: { multerUploadFile, multerValidate },
-} = require('../../config')
+	signupValidation,
+	loginValidation,
+	validate,
+} = require('../middleware/validation')
+const { multerUploadFile, multerValidate } = require('../../config/multer_')
 
 const router = Router()
 

@@ -1,16 +1,16 @@
 const { Router } = require('express')
 const { Product } = require('../models')
 const productController = require('../controllers/product-controller')
+const { verifyToken, authRole } = require('../middleware/authentication')
 const {
-	authentication: { verifyToken, authRole },
-	validation: { productValidation, validate },
-	pagination: { paginatedResponse, scopedPaginatedResponse },
-	permissions: { canDelete },
-} = require('../middleware')
-const {
-	constants: { ROLE },
-	multer_: { multerUploadMultiFile },
-} = require('../../config')
+	productValidation,
+	productValidation2,
+	validate,
+} = require('../middleware/validation')
+const { paginatedResponse, scopedPaginatedResponse } = require('../middleware/pagination')
+const { canModify } = require('../middleware/permissions')
+const { ROLE } = require('../../config/constants')
+const { multerUploadMultiFile } = require('../../config/multer_')
 
 const router = Router()
 
@@ -56,14 +56,36 @@ router.get(
 // @access	Public
 router.get('/:id', productController.getProductById)
 
-// @route	DELETE api/product/:id
+// @route	PUT api/product/update/:id
+// @desc	Update a product by id
+// @access	Private
+router.put(
+	'/update/:id',
+	verifyToken,
+	authRole([ROLE.ADMIN, ROLE.VENDOR]),
+	canModify(
+		Product,
+		'Product not found',
+		'You are not allowed to update this product'
+	),
+	multerUploadMultiFile(multerFilesFields),
+	productValidation2,
+	validate,
+	productController.updateProductById
+)
+
+// @route	DELETE api/product/remove/:id
 // @desc	Delete a product
 // @access	Private (Admin)
 router.delete(
-	'/:id',
+	'/remove/:id',
 	verifyToken,
 	authRole([ROLE.ADMIN, ROLE.VENDOR]),
-	canDelete(Product, 'Product not found', 'You are not allowed to delete this product'),
+	canModify(
+		Product,
+		'Product not found',
+		'You are not allowed to delete this product'
+	),
 	productController.deleteProduct
 )
 

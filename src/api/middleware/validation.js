@@ -1,8 +1,6 @@
 const { check, body, validationResult } = require('express-validator')
 const { HttpError } = require('../error')
-const {
-	fs_: { removeLocalFile },
-} = require('../helper')
+const { removeLocalFile } = require('../helper/fs_')
 
 // Auth validation
 exports.signupValidation = [
@@ -54,6 +52,24 @@ exports.productValidation = [
 			return true
 		}
 		const message = req.multerError || 'Main image is required'
+		throw new Error(message)
+	}),
+]
+
+// Product validation
+exports.productValidation2 = [
+	body('name').notEmpty().withMessage('Name is required'),
+	body('brand').notEmpty().withMessage('Brand name is required'),
+	body('description').notEmpty().withMessage('Description is required'),
+	body('properties').notEmpty().withMessage('Properties is required'),
+	body('mrp').notEmpty().withMessage('MRP is required'),
+	body('price').notEmpty().withMessage('Price is required'),
+	body('stock').notEmpty().withMessage('Stock is required'),
+	check('image_main').custom((value, { req }) => {
+		if (!req.multerError) {
+			return true
+		}
+		const message = req.multerError
 		throw new Error(message)
 	}),
 ]

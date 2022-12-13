@@ -1,9 +1,8 @@
 const cloudinary = require('cloudinary').v2
 const sharp = require('sharp')
-const {
-	utils: { uid },
-	fs_: { removeLocalFile },
-} = require('../api/helper')
+const { uid } = require('../api/helper/utils')
+const { removeLocalFile } = require('../api/helper/fs_')
+const { UPLOAD_DIR } = require('./constants')
 
 const rootFolder = 'BitMart/'
 
@@ -36,9 +35,9 @@ exports.deleteFromCloudinary = async publicId => {
 	return result
 }
 
-exports.compressImage = async (localFilePath, width, height, quality = 80) => {
+exports.compressImage = async (localFilePath, width, height, quality = 100) => {
 	try {
-		const newPath = `uploads/compressed/${uid()}.webp`
+		const newPath = `${UPLOAD_DIR}/compressed/${uid()}.webp`
 
 		await sharp(localFilePath, { animated: true })
 			.toFormat('webp')
@@ -61,7 +60,7 @@ exports.cloudinaryUrlTransformer = (url, type) => {
 
 	let params
 	switch (type) {
-		// avatar variations
+		// avatar image quality variations
 		case 'avatar':
 			params = 'c_fill,g_face,h_400,w_400,q_auto:good/'
 			break
@@ -71,17 +70,17 @@ exports.cloudinaryUrlTransformer = (url, type) => {
 		case 'avatar_small':
 			params = 'c_fill,g_face,h_200,w_200,q_auto:low/'
 			break
-		// product variations
+		// product image quality variations
 		case 'product':
 			params = 'c_fill,h_624,w_624,q_auto:good/'
 			break
 		case 'product_medium':
-			params = 'c_fill,h_400,w_400,q_auto:good/'
+			params = 'c_fill,h_450,w_450,q_auto:good/'
 			break
 		case 'product_small':
-			params = 'c_fill,h_200,w_200,q_auto:low/'
+			params = 'c_fill,h_250,w_250,q_auto:low/'
 			break
-		// quality variations
+		// other image quality variations
 		case 'q_good':
 			params = 'q_auto:good/'
 			break

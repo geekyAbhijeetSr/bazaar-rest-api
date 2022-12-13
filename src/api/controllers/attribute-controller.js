@@ -1,5 +1,5 @@
 const { HttpError } = require('../error')
-const { AttributeCollection } = require('../models')
+const { AttributeCollection, Category } = require('../models')
 
 exports.getAttributeCollection = async (req, res, next) => {
 	try {
@@ -106,6 +106,17 @@ exports.deleteAttributeCollection = async (req, res, next) => {
 			return next(error)
 		}
 
+		const categories = await Category.find({
+			attributeCollection: collectionId,
+		})
+
+		if (categories.length > 0) {
+			categories.forEach(async category => {
+				category.attributeCollection = null
+				await category.save()
+			})
+		}
+
 		await existCollection.remove()
 
 		res.status(200).json({
@@ -113,6 +124,11 @@ exports.deleteAttributeCollection = async (req, res, next) => {
 			collectionId,
 		})
 	} catch (err) {
+		console.log(err)
+		if (err.kind === 'ObjectId') {
+			const error = new HttpError('Attribute collection not found', 422)
+			return next(error)
+		}
 		const error = new HttpError('Removing attribute collection failed', 500)
 		next(error)
 	}
@@ -261,6 +277,10 @@ exports.deleteAttribute = async (req, res, next) => {
 			attributeCollection: existCollection,
 		})
 	} catch (err) {
+		if (err.kind === 'ObjectId') {
+			const error = new HttpError('Attribute collection not found', 422)
+			return next(error)
+		}
 		const error = new HttpError('Removing attribute failed', 500)
 		next(error)
 	}

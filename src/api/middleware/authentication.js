@@ -1,9 +1,7 @@
 const jwt = require('jsonwebtoken')
 const { HttpError } = require('../error')
 const { User } = require('../models')
-const {
-	utils: { capitalize },
-} = require('../helper')
+const { capitalize } = require('../helper/utils')
 
 exports.verifyToken = async (req, res, next) => {
 	try {
@@ -32,7 +30,7 @@ exports.authRole = roles => {
 				return next(error)
 			}
 			if (!roles.includes(user.role)) {
-				const error = new HttpError(`Access denied! you are not ${roles}.`, 403)
+				const error = new HttpError(`Access denied!`, 403)
 				return next(error)
 			}
 			req.user = user

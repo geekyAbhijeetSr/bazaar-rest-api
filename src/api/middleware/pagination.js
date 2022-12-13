@@ -93,7 +93,7 @@ exports.scopedPaginatedResponse = model => {
 			next()
 		} catch (e) {
 			const error = new HttpError(
-				'Something went wrong, could not get paginated results.',
+				'Something went wrong, could not get paginated results',
 				500
 			)
 			return next(error)

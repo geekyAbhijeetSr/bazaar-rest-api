@@ -1,15 +1,13 @@
 const { HttpError } = require('../error')
 const { User } = require('../models')
+const { capitalize, avatarPlaceholder } = require('../helper/utils')
+const { removeLocalFile } = require('../helper/fs_')
 const {
-	utils: { capitalize, avatarPlaceholder },
-	fs_: { removeLocalFile },
-} = require('../helper')
-const {
-	cloudinary_: { compressImage, uploadToCloudinary, cloudinaryUrlTransformer },
-} = require('../../config')
-const {
-	constants: { EXPIRES_IN },
-} = require('../../config')
+	compressImage,
+	uploadToCloudinary,
+	cloudinaryUrlTransformer,
+} = require('../../config/cloudinary_')
+const { EXPIRES_IN, ROLE } = require('../../config/constants')
 
 exports.signup = async (req, res, next) => {
 	try {
@@ -96,12 +94,12 @@ exports.login = async (req, res, next) => {
 		}
 
 		if (req.url === '/login') {
-			if (user.role !== 'user') {
+			if (user.role !== ROLE.CUSTOMER) {
 				const error = new HttpError('Access denied!', 401)
 				return next(error)
 			}
-		} else if (req.url === '/admin/login') {
-			if (user.role !== 'admin') {
+		} else if (req.url === '/dashboard/login') {
+			if (user.role === ROLE.CUSTOMER) {
 				const error = new HttpError('Access denied!', 403)
 				return next(error)
 			}

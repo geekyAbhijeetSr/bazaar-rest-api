@@ -1,17 +1,13 @@
 const { HttpError } = require('../error')
 const { Category } = require('../models')
+const { convertToSlug, categoriesToTree } = require('../helper/utils')
+const { removeLocalFile } = require('../helper/fs_')
 const {
-	utils: { convertToSlug, categoriesToTree },
-	fs_: { removeLocalFile },
-} = require('../helper')
-const {
-	cloudinary_: {
-		compressImage,
-		uploadToCloudinary,
-		deleteFromCloudinary,
-		cloudinaryUrlTransformer,
-	},
-} = require('../../config')
+	compressImage,
+	uploadToCloudinary,
+	deleteFromCloudinary,
+	cloudinaryUrlTransformer,
+} = require('../../config/cloudinary_')
 
 exports.createCategory = async (req, res, next) => {
 	try {
@@ -47,13 +43,13 @@ exports.createCategory = async (req, res, next) => {
 			(categoryObj.attributeCollection = attributeCollection)
 
 		if (req.file) {
-			const compressedImgPath = await compressImage(req.file.path, 400, 400)
+			const compressedImgPath = await compressImage(req.file.path, 450, 450)
 			const result = await uploadToCloudinary(compressedImgPath, 'categories')
 			const url = result.secure_url
 			const publicId = result.public_id
 
 			categoryObj.image = {
-				url: cloudinaryUrlTransformer(url, 'q_medium'),
+				url: cloudinaryUrlTransformer(url, 'q_good'),
 				cloudinaryId: publicId,
 			}
 		}
@@ -115,33 +111,31 @@ exports.updateCategory = async (req, res, next) => {
 			}
 			foundCat.slug =
 				convertToSlug(name) + '-' + convertToSlug(parentCategory.name)
+		} else {
+			foundCat.slug = convertToSlug(name)
+		}
 
-			const existCategory = await Category.findOne({
-				slug: foundCat.slug,
-			})
+		const existCategory = await Category.findOne({
+			slug: foundCat.slug,
+		})
 
-			if (existCategory && existCategory._id.toString() !== catId) {
-				const error = new HttpError('Category already exist', 422)
-				return next(error)
-			}
+		if (existCategory && existCategory._id.toString() !== catId) {
+			const error = new HttpError('Category already exist', 422)
+			return next(error)
 		}
 
 		foundCat.name = name
 		attributeCollection && (foundCat.attributeCollection = attributeCollection)
 
 		if (req.file) {
-			const result_ = await deleteFromCloudinary(foundCat.image.cloudinaryId)
-			if (result_ !== 'ok') {
-				const error = new HttpError('Updating category failed', 500)
-				return next(error)
-			}
-			const compressedImgPath = await compressImage(req.file.path, 400, 400)
+			await deleteFromCloudinary(foundCat.image.cloudinaryId)
+			const compressedImgPath = await compressImage(req.file.path, 450, 450)
 			const result = await uploadToCloudinary(compressedImgPath, 'categories')
 			const url = result.secure_url
 			const publicId = result.public_id
 
 			foundCat.image = {
-				url: cloudinaryUrlTransformer(url, 'q_medium'),
+				url: cloudinaryUrlTransformer(url, 'q_good'),
 				cloudinaryId: publicId,
 			}
 		}
@@ -207,7 +201,7 @@ exports.deleteCategory = async (req, res, next) => {
 			return next(error)
 		}
 
-		if (category.image.cloudinaryId) {
+		if (category?.image?.cloudinaryId) {
 			const result = await deleteFromCloudinary(category.image.cloudinaryId)
 		}
 
@@ -218,6 +212,10 @@ exports.deleteCategory = async (req, res, next) => {
 			categoryId: req.params.catId,
 		})
 	} catch (err) {
+		if (err.kind === 'ObjectId') {
+			const error = new HttpError('Category does not exist', 404)
+			return next(error)
+		}
 		const error = new HttpError('Deleting category failed', 500)
 		return next(error)
 	}

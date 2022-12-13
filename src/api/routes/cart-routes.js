@@ -1,11 +1,7 @@
 const { Router } = require('express')
 const cartController = require('../controllers/cart-controller')
-const {
-	authentication: { verifyToken, authRole },
-} = require('../middleware')
-const {
-	constants: { ROLE },
-} = require('../../config')
+const { verifyToken, authRole } = require('../middleware/authentication')
+const { ROLE } = require('../../config/constants')
 
 const router = Router()
 
